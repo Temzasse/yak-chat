@@ -8,7 +8,7 @@ A chat app blaa blaa...
 
 First install linters:
 ```
-$ npm run install
+$ npm install
 ```
 
 Then start the app:
