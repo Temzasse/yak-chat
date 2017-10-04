@@ -1,0 +1,40 @@
+{
+  "name": "yak-chat-server",
+  "version": "0.0.1",
+  "description": "",
+  "private": false,
+  "scripts": {
+    "up": "docker-compose up",
+    "down": "docker-compose down",
+    "clean:build": "docker-compose down; docker-compose up --build",
+    "clean:install": "rm -rf node_modules; npm install",
+    "reinstall:client": "docker exec -it yak-client npm install --quiet",
+    "reinstall:server": "docker exec -it yak-server npm install --quiet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:Temzasse/yak-chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Temzasse/yak-chat/issues"
+  },
+  "keywords": [
+    "koa",
+    "websocket",
+    "chat"
+  ],
+  "author": "Teemu Taskula, Jesse Koivukoski, Antti Kurkinen",
+  "license": "MIT",
+  "homepage": "https://github.com/Temzasse/yak-chat#readme",
+  "devDependencies": {
+    "babel-eslint": "7.2.3",
+    "eslint": "4.7.2",
+    "eslint-config-airbnb": "15.1.0",
+    "eslint-config-airbnb-base": "12.0.1",
+    "eslint-config-react-app": "2.0.1",
+    "eslint-plugin-flowtype": "2.34.1",
+    "eslint-plugin-import": "2.7.0",
+    "eslint-plugin-jsx-a11y": "5.1.1",
+    "eslint-plugin-react": "7.1.0"
+  }
+}

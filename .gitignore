@@ -1,0 +1,9 @@
+node_modules
+tmp
+.DS_Store
+.vscode
+build
+*.log
+*.tmp
+*.pyc
+*~

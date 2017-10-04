@@ -1,0 +1,39 @@
+{
+  "name": "yak-chat-server",
+  "version": "1.0.0",
+  "description": "Yak chat server",
+  "main": "index.js",
+  "private": false,
+  "scripts": {
+    "start": "npm run start:dev",
+    "start:dev": "NODE_ENV=development nodemon -L ./index.js --ignore 'test/*.js'",
+    "start:prod": "NODE_ENV=production nodemon -L ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:Temzasse/yak-chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Temzasse/yak-chat/issues"
+  },
+  "keywords": [
+    "koa",
+    "websocket",
+    "chat"
+  ],
+  "author": "Teemu Taskula, Jesse Koivukoski, Antti Kurkinen",
+  "license": "MIT",
+  "homepage": "https://github.com/Temzasse/yak-chat#readme",
+  "dependencies": {
+    "@std/esm": "0.11.2",
+    "boom": "^6.0.0",
+    "kcors": "^2.2.1",
+    "koa": "^2.3.0",
+    "koa-better-body": "^3.0.4",
+    "koa-convert": "1.2.0",
+    "koa-router": "^7.2.1",
+    "koa-socket": "^4.4.0",
+    "lodash": "^4.17.4",
+    "winston": "3.0.0-rc0"
+  }
+}

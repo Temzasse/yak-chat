@@ -1,0 +1,26 @@
+client:
+  container_name: yak-client
+  build: ./client
+  restart: always
+  ports:
+    - "3000:3000"
+  volumes:
+    - "./client:/app"
+    - "/app/node_modules"
+  links:
+    - server:server
+
+server:
+  container_name: yak-server
+  build: ./server
+  restart: always
+  ports:
+    - "3332:3332"
+  volumes:
+    - "./server:/app"
+    - "/app/node_modules"
+  environment:
+    ENV: dev
+    DEBUG: 'true'
+    API_BINDADDR: 0.0.0.0
+    API_PORT: 3332
