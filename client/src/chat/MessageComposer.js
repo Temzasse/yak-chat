@@ -1,0 +1,110 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styled, { css, keyframes } from 'styled-components';
+import SendIcon from 'react-icons/lib/md/send';
+
+const propTypes = {
+  something: PropTypes.any,
+};
+
+class MessageComposer extends Component {
+  state = {
+    message: '',
+    inputFocused: false,
+  }
+
+  handleSubmit = event => {
+    event.preventDefault();
+    const { message } = this.state;
+    console.debug('[message]', message);
+  }
+
+  handleChange = ({ target }) => {
+    this.setState({ message: target.value });
+  }
+
+  handleFocus = () => {
+    this.setState({ inputFocused: true });
+  }
+
+  handleBlur = () => {
+    this.setState({ inputFocused: false });
+  }
+
+  render() {
+    const { message, inputFocused } = this.state;
+
+    return (
+      <Wrapper onSubmit={this.handleSubmit}>
+        <Blinker blink={!inputFocused} />
+
+        <Input
+          value={message}
+          onChange={this.handleChange}
+          placeholder='Yak to your mates...'
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
+        />
+
+        <SendButton type='submit'>
+          <Icon readyToSend={!!message} />
+        </SendButton>
+      </Wrapper>
+    );
+  }
+}
+
+const blink = keyframes`
+  from { opacity: 0 }
+  to { opacity: 1 }
+`;
+
+const Wrapper = styled.form`
+  height: 60px;
+  border-top: 1px solid ${props => props.theme.greyLight};
+  padding: 0px 16px;
+  display: flex;
+  align-items: center;
+`;
+
+const Input = styled.input`
+  padding: 12px 0px;
+  border: none;
+  background: none;
+  flex: 1;
+  outline: none;
+  margin-left: 1px;
+  font-size: 14px;
+`;
+
+const SendButton = styled.button`
+  border: none;
+  background: none;
+  margin-left: 16px;
+`;
+
+const Icon = styled(SendIcon)`
+  width: 24px;
+  height: 24px;
+  transition: fill 0.4s ease;
+  fill: ${props => props.theme.greyLighter};
+
+  ${props => props.readyToSend && css`
+    fill: ${props.theme.secondaryColor};
+  `}
+`;
+
+const Blinker = styled.div`
+  height: 24px;
+  width: 1px;
+  background-color: ${props => props.theme.secondaryColor};
+  opacity: 0;
+
+  ${props => props.blink && css`
+    animation: ${blink} infinite 1.2s forwards;
+  `}
+`;
+
+MessageComposer.propTypes = propTypes;
+
+export default MessageComposer;

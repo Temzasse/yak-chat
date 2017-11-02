@@ -11,7 +11,7 @@ import registerServiceWorker from './registerServiceWorker';
 import createSocket from './services/websocket';
 import store from './store';
 
-createSocket();
+createSocket(store);
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>

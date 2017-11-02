@@ -1,29 +1,45 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from 'react-router-dom';
 
 import Chat from './chat/Chat';
 import CreateUser from './user/CreateUser';
+import JoinChannel from './channel/JoinChannel';
 
 class App extends Component {
   componentWillMount() {
     this.props.fetchUser();
+    this.props.fetchChannel();
   }
 
   render() {
-    const { userFound, userFetched } = this.props;
-    console.debug('[this.props]', this.props);
+    const { user, userFetched, activeChannel } = this.props;
+
+    // Wait until the user has been fetched
+    if (!userFetched) return null;
 
     return (
       <AppWrapper>
         <Router>
           <div>
-            <Route path='/create-user' component={CreateUser} />
-            <Route path='/chat' component={Chat} />
+            <Switch>
+              <Route exact path='/' component={Chat} />
+              <Route path='/create-user' component={CreateUser} />
+              <Route path='/join-channel' component={JoinChannel} />
+            </Switch>
 
-            {userFetched && !userFound &&
+            {!user &&
               <Redirect to='/create-user' />
+            }
+
+            {user && !activeChannel &&
+              <Redirect to='/join-channel' />
             }
           </div>
         </Router>
@@ -42,7 +58,9 @@ const AppWrapper = styled.div`
 const AppView = observer(App);
 
 export default inject(({ store }) => ({
+  user: store.user,
   userFetched: store.userFetched,
-  userFound: store.userFound,
   fetchUser: store.fetchUser,
+  activeChannel: store.chat.activeChannel,
+  fetchChannel: store.chat.fetchChannel,
 }))(AppView);

@@ -10,12 +10,14 @@ import TextField from 'react-components-kit/dist/TextField';
 import Gutter from 'react-components-kit/dist/Gutter';
 import Button from 'react-components-kit/dist/Button';
 import Layout from 'react-components-kit/dist/Layout';
+import media from 'react-components-kit/dist/media';
 
 import logo from '../assets/logo.svg';
 
 const propTypes = {
-  userFound: PropTypes.bool.isRequired,
+  user: PropTypes.object,
   userFetched: PropTypes.bool.isRequired,
+  setUser: PropTypes.func.isRequired,
 };
 
 class CreateUser extends Component {
@@ -33,12 +35,27 @@ class CreateUser extends Component {
     return false;
   }
 
+  handleSubmit = event => {
+    event.preventDefault();
+    const { nickname } = this.state;
+
+    if (nickname) {
+      this.props.setUser({ nickname });
+    }
+  }
+
   render() {
     const { nickname, isValid } = this.state;
-    const { userFound, userFetched } = this.props;
+    const { user, userFetched } = this.props;
+
+    if (userFetched && user) {
+      return (
+        <Redirect to='/' />
+      );
+    }
 
     return (
-      <CreateUserWrapper>
+      <CreateUserWrapper onSubmit={this.handleSubmit}>
         <CreateUserCard column>
           <Logo src={logo} />
 
@@ -66,15 +83,11 @@ class CreateUser extends Component {
           <Gutter vertical amount='32px' />
 
           <Layout justify='flex-end'>
-            <Button type='submit' disabled={!isValid}>
-              Get yakking!
+            <Button flat type='submit' disabled={!isValid}>
+              Start yakking!
             </Button>
           </Layout>
         </CreateUserCard>
-
-        {userFetched && userFound &&
-          <Redirect to='/' />
-        }
       </CreateUserWrapper>
     );
   }
@@ -87,6 +100,10 @@ const CreateUserWrapper = styled.form`
   align-items: center;
   justify-content: center;
   background-color: ${props => props.theme.secondaryColorLightest};
+
+  ${media.tablet`
+    padding: 16px;
+  `}
 `;
 
 const Logo = styled.img`
@@ -107,9 +124,8 @@ const CreateUserCard = styled(Layout)`
 
 CreateUser.propTypes = propTypes;
 
-const CreateUserView = observer(CreateUser);
-
 export default inject(({ store }) => ({
   userFetched: store.userFetched,
-  userFound: store.userFound,
-}))(CreateUserView);
+  user: store.user,
+  setUser: store.setUser,
+}))(observer(CreateUser));
