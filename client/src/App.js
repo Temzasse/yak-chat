@@ -1,21 +1,48 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import styled from 'styled-components';
+import { inject, observer } from 'mobx-react';
+
+import Chat from './chat/Chat';
+import CreateUser from './user/CreateUser';
 
 class App extends Component {
+  componentWillMount() {
+    this.props.fetchUser();
+  }
+
   render() {
+    const { userFound, userFetched } = this.props;
+    console.debug('[this.props]', this.props);
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <AppWrapper>
+        <Router>
+          <div>
+            <Route path='/create-user' component={CreateUser} />
+            <Route path='/chat' component={Chat} />
+
+            {userFetched && !userFound &&
+              <Redirect to='/create-user' />
+            }
+          </div>
+        </Router>
+      </AppWrapper>
     );
   }
 }
 
-export default App;
+const AppWrapper = styled.div`
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #fff;
+`;
+
+const AppView = observer(App);
+
+export default inject(({ store }) => ({
+  userFetched: store.userFetched,
+  userFound: store.userFound,
+  fetchUser: store.fetchUser,
+}))(AppView);
