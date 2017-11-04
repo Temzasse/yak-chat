@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import format from 'date-fns/format';
+import { observer } from 'mobx-react';
 import MessageItem from './MessageItem';
 
 const propTypes = {
@@ -35,4 +36,4 @@ const Wrapper = styled.div`
 
 MessageList.propTypes = propTypes;
 
-export default MessageList;
+export default observer(MessageList);

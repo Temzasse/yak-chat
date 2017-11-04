@@ -4,7 +4,8 @@ import styled, { css, keyframes } from 'styled-components';
 import SendIcon from 'react-icons/lib/md/send';
 
 const propTypes = {
-  something: PropTypes.any,
+  addMessage: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 class MessageComposer extends Component {
@@ -16,7 +17,9 @@ class MessageComposer extends Component {
   handleSubmit = event => {
     event.preventDefault();
     const { message } = this.state;
-    console.debug('[message]', message);
+    const { user } = this.props;
+    this.props.addMessage({ content: message, sender: user });
+    this.setState({ message: '' });
   }
 
   handleChange = ({ target }) => {

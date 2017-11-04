@@ -37,6 +37,7 @@ class Chat extends Component {
   render() {
     const { sidebarOpen } = this.state;
     const { messages, loading, user } = this.props;
+    console.debug('[this.props]', this.props);
 
     return (
       <Wrapper row>
@@ -46,13 +47,16 @@ class Chat extends Component {
             <Gutter amount='8px' />
             Join channel
           </BlockButton>
+
           <Gutter vertical />
+
           <BlockButton flat>
             <NewIcon />
             <Gutter amount='8px' />
             New channel
           </BlockButton>
         </Sidebar>
+
         <Main column>
           <Navbar onMenuPress={this.toggleSidebarOpen} />
           <ChatHeader />
@@ -61,7 +65,11 @@ class Chat extends Component {
             ? <Loader><Spinner md color='#ccc' /></Loader>
             : <MessageList messages={messages} user={user} />
           }
-          <MessageComposer />
+
+          <MessageComposer
+            user={user}
+            addMessage={this.props.addMessage}
+          />
         </Main>
       </Wrapper>
     );
@@ -91,6 +99,7 @@ Chat.propTypes = propTypes;
 
 export default inject(({ store }) => ({
   fetchMessages: store.chat.fetchMessages,
+  addMessage: store.chat.addMessage,
   messages: store.chat.messages,
   loading: store.chat.loading,
   user: store.user,

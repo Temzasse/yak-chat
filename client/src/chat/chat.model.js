@@ -6,7 +6,7 @@ const Message = types
   .model({
     content: '',
     type: types.optional(types.string, 'message'),
-    timestamp: types.optional(types.Date, () => Date.now()),
+    timestamp: types.optional(types.number, () => Date.now()),
     sender: types.reference(types.late(() => User)),
   });
 
@@ -34,16 +34,25 @@ const Chat = types
       storage.set('activeChannel', channelId);
     },
 
+    addMessage({ content, sender }) {
+      const timestamp = Date.now();
+      self.messages.push({
+        content,
+        sender,
+        timestamp,
+        type: 'message',
+      });
+    },
+
     fetchMessages: flow(function* fetchMessages() {
       self.loading = true;
 
       try {
         // TODO: user self.activeChannel here to fetch messages
         const messages = yield fetch('/messages.json').then(res => res.json());
-        self.messages = messages.map(m => ({
-          ...m,
-          sender: User.create(m.sender),
-        }));
+        self.messages = messages
+          .map(msg => ({ ...msg, sender: User.create(msg.sender) }))
+          .sort((a, b) => a.timestamp - b.timestamp);
       } catch (e) {
         console.log('Error in fetchMessages', e);
         throw e;
