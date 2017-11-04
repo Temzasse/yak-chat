@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { inject, observer } from 'mobx-react';
 import Layout from 'react-components-kit/dist/Layout';
 import Gutter from 'react-components-kit/dist/Gutter';
+import Spinner from 'react-components-kit/dist/Spinner';
 import NewIcon from 'react-icons/lib/fa/plus';
 import JoinIcon from 'react-icons/lib/fa/group';
 
@@ -14,12 +16,18 @@ import MessageList from './MessageList';
 import ChatHeader from './ChatHeader';
 
 const propTypes = {
-  something: PropTypes.any,
+  fetchMessages: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 class Chat extends Component {
   state = {
     sidebarOpen: false,
+  }
+
+  componentWillMount() {
+    this.props.fetchMessages();
   }
 
   toggleSidebarOpen = () => {
@@ -28,6 +36,7 @@ class Chat extends Component {
 
   render() {
     const { sidebarOpen } = this.state;
+    const { messages, loading, user } = this.props;
 
     return (
       <Wrapper row>
@@ -48,10 +57,10 @@ class Chat extends Component {
           <Navbar onMenuPress={this.toggleSidebarOpen} />
           <ChatHeader />
 
-          <Layout.Box flex='1'>
-            <MessageList />
-          </Layout.Box>
-
+          {loading
+            ? <Loader><Spinner md color='#ccc' /></Loader>
+            : <MessageList messages={messages} user={user} />
+          }
           <MessageComposer />
         </Main>
       </Wrapper>
@@ -70,6 +79,19 @@ const Main = styled(Layout)`
   flex: 1;
 `;
 
+const Loader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+`;
+
 Chat.propTypes = propTypes;
 
-export default Chat;
+export default inject(({ store }) => ({
+  fetchMessages: store.chat.fetchMessages,
+  messages: store.chat.messages,
+  loading: store.chat.loading,
+  user: store.user,
+}))(observer(Chat));

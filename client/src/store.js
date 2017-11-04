@@ -15,15 +15,19 @@ const RootStore = types
       const user = storage.get('user');
 
       if (user) {
-        self.user = User.create(user);
+        // TODO: remove manual id
+        self.user = User.create({ ...user, id: '2' });
       }
 
       self.userFetched = true;
     },
-    setUser(user) {
+
+    setUser(u) {
+      const user = { ...u, id: Date.now().toString() };
       storage.set('user', user);
       self.user = User.create(user);
     },
+
     updateFoo() {
       self.foo = 'bar';
     }
