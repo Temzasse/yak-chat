@@ -88,7 +88,7 @@ class MessageList extends Component {
 const Wrapper = styled.div`
   height: 100%;
   width: 100%;
-  padding: 16px;
+  padding: 16px 16px 0px 16px;
   overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
