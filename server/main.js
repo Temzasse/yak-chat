@@ -11,9 +11,7 @@ import logger from './logger';
 // import routes from './routes';
 
 const app = new Koa();
-const chat = new IO({
-  namespace: 'chat'
-});
+const chat = new IO();
 
 // Use Cors
 app.use(cors());
@@ -51,8 +49,31 @@ chat.on('message', ctx => {
   chat.broadcast('response', 'foobar');
 });
 
+
+// TODO: remove
+// Just testing sending messages to the client
+let dummy;
+
 chat.on('connection', () => {
   logger.info('socket connected!');
+  let i = 0;
+
+  if (dummy) clearInterval(dummy);
+
+  dummy = setInterval(() => {
+    i += 1;
+    const msg = {
+      content: `Teemu testiviesti ${i}`,
+      timestamp: Date.now(),
+      type: 'message',
+      sender: {
+        id: '99',
+        nickname: 'Julle',
+      }
+    };
+
+    chat.broadcast('CHAT_MESSAGE', msg);
+  }, 5000);
 });
 
 chat.on('join', (ctx, data) => {

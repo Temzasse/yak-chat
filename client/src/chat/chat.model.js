@@ -37,7 +37,8 @@ const Chat = types
     },
 
     addMessage({ content, sender, timestamp = Date.now(), type = 'message' }) {
-      self.messages.push({ content, sender, timestamp, type });
+      const u = User.create({ ...sender });
+      self.messages.push({ content, sender: u, timestamp, type });
 
       /*
        * Show "You have new messages" thingy if someone else than the current

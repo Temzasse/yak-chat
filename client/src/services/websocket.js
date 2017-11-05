@@ -17,6 +17,11 @@ const createSocket = store => {
     store.updateFoo();
   });
 
+  socket.on('CHAT_MESSAGE', msg => {
+    console.debug('[SOCKET] TEST', msg);
+    store.chat.addMessage(msg);
+  });
+
   socket.on('disconnect', () => {
     console.debug('[SOCKET] disconnected!');
   });
