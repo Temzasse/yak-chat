@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { inject, observer } from 'mobx-react';
+import { inject, observer, PropTypes as pt } from 'mobx-react';
 import Layout from 'react-components-kit/dist/Layout';
 import Gutter from 'react-components-kit/dist/Gutter';
 import Spinner from 'react-components-kit/dist/Spinner';
@@ -15,23 +15,25 @@ import MessageComposer from './MessageComposer';
 import MessageList from './MessageList';
 import ChatHeader from './ChatHeader';
 
-const propTypes = {
-  fetchMessages: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired,
-  user: PropTypes.object.isRequired,
-};
-
 class Chat extends Component {
+  static propTypes = {
+    fetchMessages: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired,
+    user: PropTypes.object.isRequired,
+    addMessage: PropTypes.func.isRequired,
+    messages: pt.observableArray.isRequired,
+    unseenMessages: PropTypes.bool.isRequired,
+    followingMessages: PropTypes.bool.isRequired,
+    followMessages: PropTypes.func.isRequired,
+    unfollowMessages: PropTypes.func.isRequired,
+  }
+
   state = {
     sidebarOpen: false,
   }
-    
+
   componentWillMount() {
     this.props.fetchMessages();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    console.debug('[nextProps]', nextProps.messages.toJS(), this.props.messages.toJS());
   }
 
   toggleSidebarOpen = () => {
@@ -40,8 +42,13 @@ class Chat extends Component {
 
   render() {
     const { sidebarOpen } = this.state;
-    const { messages, loading, user } = this.props;
-    console.debug('[this.props]', this.props);
+    const {
+      messages,
+      loading,
+      user,
+      unseenMessages,
+      followingMessages,
+    } = this.props;
 
     return (
       <Wrapper row>
@@ -65,15 +72,22 @@ class Chat extends Component {
           <Navbar onMenuPress={this.toggleSidebarOpen} />
           <ChatHeader />
 
-          {loading
-            ? <Loader><Spinner md color='#ccc' /></Loader>
-            : <MessageList messages={messages} user={user} />
+          {loading ?
+            <Loader>
+              <Spinner md color='#ccc' />
+            </Loader> :
+
+            <MessageList
+              messages={messages}
+              user={user}
+              unseenMessages={unseenMessages}
+              followingMessages={followingMessages}
+              followMessages={this.props.followMessages}
+              unfollowMessages={this.props.unfollowMessages}
+            />
           }
 
-          <MessageComposer
-            user={user}
-            addMessage={this.props.addMessage}
-          />
+          <MessageComposer user={user} addMessage={this.props.addMessage} />
         </Main>
       </Wrapper>
     );
@@ -99,12 +113,14 @@ const Loader = styled.div`
   height: 100%;
 `;
 
-Chat.propTypes = propTypes;
-
 export default inject(({ store: { chat, user } }) => ({
   fetchMessages: chat.fetchMessages,
   addMessage: chat.addMessage,
   messages: chat.messages,
   loading: chat.loading,
+  unseenMessages: chat.unseenMessages,
+  followingMessages: chat.followingMessages,
+  followMessages: chat.followMessages,
+  unfollowMessages: chat.unfollowMessages,
   user,
 }))(observer(Chat));

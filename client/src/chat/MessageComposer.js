@@ -18,8 +18,11 @@ class MessageComposer extends Component {
     event.preventDefault();
     const { message } = this.state;
     const { user } = this.props;
-    this.props.addMessage({ content: message, sender: user });
-    this.setState({ message: '' });
+
+    if (message) {
+      this.props.addMessage({ content: message, sender: user });
+      this.setState({ message: '' });
+    }
   }
 
   handleChange = ({ target }) => {
@@ -76,7 +79,7 @@ const Input = styled.input`
   background: none;
   flex: 1;
   outline: none;
-  margin-left: 1px;
+  margin-left: 2px;
   font-size: 14px;
 `;
 
@@ -84,6 +87,12 @@ const SendButton = styled.button`
   border: none;
   background: none;
   margin-left: 16px;
+  outline: none;
+  transition: transform 0.3s ease;
+
+  &:active {
+    transform: scale(1.2);
+  }
 `;
 
 const Icon = styled(SendIcon)`
@@ -99,12 +108,12 @@ const Icon = styled(SendIcon)`
 
 const Blinker = styled.div`
   height: 24px;
-  width: 1px;
+  width: 2px;
   background-color: ${props => props.theme.secondaryColor};
   opacity: 0;
 
   ${props => props.blink && css`
-    animation: ${blink} infinite 1.2s forwards;
+    animation: ${blink} infinite 2s forwards;
   `}
 `;
 

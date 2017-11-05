@@ -1,4 +1,4 @@
-import { types, flow } from 'mobx-state-tree';
+import { types, flow, getParent } from 'mobx-state-tree';
 import storage from 'store';
 import User from '../user/user.model';
 
@@ -13,6 +13,8 @@ const Message = types
 const Chat = types
   .model({
     loading: false,
+    unseenMessages: false,
+    followingMessages: false,
     messages: types.optional(types.array(Message), []),
     activeChannel: types.maybe(types.string),
   })
@@ -34,14 +36,27 @@ const Chat = types
       storage.set('activeChannel', channelId);
     },
 
-    addMessage({ content, sender }) {
-      const timestamp = Date.now();
-      self.messages.push({
-        content,
-        sender,
-        timestamp,
-        type: 'message',
-      });
+    addMessage({ content, sender, timestamp = Date.now(), type = 'message' }) {
+      self.messages.push({ content, sender, timestamp, type });
+
+      /*
+       * Show "You have new messages" thingy if someone else than the current
+       * user added a new message.
+       */
+      const { user } = getParent(self);
+
+      if (!self.followingMessages && sender.id !== user.id) {
+        self.unseenMessages = true;
+      }
+    },
+
+    followMessages() {
+      self.followingMessages = true;
+      self.unseenMessages = false;
+    },
+
+    unfollowMessages() {
+      self.followingMessages = false;
     },
 
     fetchMessages: flow(function* fetchMessages() {

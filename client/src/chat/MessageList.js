@@ -3,42 +3,71 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import format from 'date-fns/format';
 import { observer, PropTypes as pt } from 'mobx-react';
-import MessageItem from './MessageItem';
+import throttle from 'lodash.throttle';
 
-const propTypes = {
-  messages: pt.observableArrayOf(PropTypes.shape({
-    timestamp: PropTypes.number.isRequired,
-    content: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(['message', 'file']).isRequired,
-    sender: PropTypes.object.isRequired,
-  })).isRequired,
-};
+import MessageItem from './MessageItem';
+import UnseenMessages from './UnseenMessages';
 
 class MessageList extends Component {
+  static propTypes = {
+    messages: pt.observableArrayOf(PropTypes.shape({
+      timestamp: PropTypes.number.isRequired,
+      content: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['message', 'file']).isRequired,
+      sender: PropTypes.object.isRequired,
+    })).isRequired,
+    user: PropTypes.object.isRequired,
+    unseenMessages: PropTypes.bool.isRequired,
+    followingMessages: PropTypes.bool.isRequired,
+  }
+
   /**
    * NOTE:
    * Mobx makes using componentWillReceiveProps impossible.
    * So we are forced to use componentWill/DidUpdate instead...
    */
-  componentDidUpdate(nextProps) {
-    if (nextProps.messages.length > 0) {
-      // New message arrived.. I guess...
-      const { messages } = nextProps;
-      const { user } = this.props;
-      const newest = messages[messages.length - 1];
+  componentDidUpdate() {
+    // Keep to user at the bottom if he is following the chat
+    if (this.props.followingMessages) this.scrollToBottom();
+  }
 
-      // Users own message --> scroll to bottom
-      if (newest.sender.id === user.id) {
-        this.listNode.scrollTop = this.listNode.scrollHeight;
+  handleFollowing = throttle(() => {
+    const { scrollTop, scrollHeight, offsetHeight } = this.listNode;
+    const fromBottom = Math.abs((scrollTop + offsetHeight) - scrollHeight);
+
+    if (!this.props.followingMessages) {
+      // If we are close to bottom of scroll container -> start to follow
+      if (fromBottom < 100) {
+        this.props.followMessages();
       }
+    } else if (fromBottom > 100) {
+      // Detach follow if user scrolls far enough from the bottom
+      this.props.unfollowMessages();
     }
+  }, 500)
+
+  /**
+   * Use intermideate handleScroll method to first persist the event and then
+   * pass it throught to the actual (throttled) handler.
+   */
+  handleScroll = event => {
+    event.persist();
+    this.handleFollowing(event);
+  }
+
+  scrollToBottom = () => {
+    this.listNode.scrollTop = this.listNode.scrollHeight;
   }
 
   render() {
-    const { messages, user } = this.props;
+    const { messages, user, unseenMessages, followingMessages } = this.props;
 
     return (
-      <Wrapper innerRef={node => { this.listNode = node; }}>
+      <Wrapper
+        innerRef={node => { this.listNode = node; }}
+        onScroll={this.handleScroll}
+        onWheel={this.handleScroll}
+      >
         {messages.map(msg =>
           <MessageItem
             isOwn={msg.sender.id === user.id}
@@ -47,6 +76,10 @@ class MessageList extends Component {
             key={`${msg.timestamp}-${msg.sender.id}`}
           />
         )}
+
+        {unseenMessages && !followingMessages &&
+          <UnseenMessages handlePress={this.scrollToBottom} />
+        }
       </Wrapper>
     );
   }
@@ -58,8 +91,12 @@ const Wrapper = styled.div`
   padding: 16px;
   overflow-y: scroll;
   overflow-x: hidden;
-`;
+  position: relative;
 
-MessageList.propTypes = propTypes;
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+`;
 
 export default observer(MessageList);
