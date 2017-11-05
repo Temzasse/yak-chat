@@ -25,9 +25,13 @@ class Chat extends Component {
   state = {
     sidebarOpen: false,
   }
-
+    
   componentWillMount() {
     this.props.fetchMessages();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.debug('[nextProps]', nextProps.messages.toJS(), this.props.messages.toJS());
   }
 
   toggleSidebarOpen = () => {
@@ -97,10 +101,10 @@ const Loader = styled.div`
 
 Chat.propTypes = propTypes;
 
-export default inject(({ store }) => ({
-  fetchMessages: store.chat.fetchMessages,
-  addMessage: store.chat.addMessage,
-  messages: store.chat.messages,
-  loading: store.chat.loading,
-  user: store.user,
+export default inject(({ store: { chat, user } }) => ({
+  fetchMessages: chat.fetchMessages,
+  addMessage: chat.addMessage,
+  messages: chat.messages,
+  loading: chat.loading,
+  user,
 }))(observer(Chat));
