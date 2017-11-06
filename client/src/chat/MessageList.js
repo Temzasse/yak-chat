@@ -73,6 +73,7 @@ class MessageList extends Component {
             isOwn={msg.sender.id === user.id}
             time={format(new Date(msg.timestamp), 'HH.mm')}
             content={msg.content}
+            nickname={msg.sender.nickname}
             key={`${msg.timestamp}-${msg.sender.id}`}
           />
         )}

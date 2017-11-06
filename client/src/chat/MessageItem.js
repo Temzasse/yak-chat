@@ -8,16 +8,28 @@ const propTypes = {
   isOwn: PropTypes.bool.isRequired,
 };
 
-const MessageItem = ({ content, time, isOwn }) => (
+const MessageItem = ({ content, time, nickname, isOwn }) => (
   <Wrapper isOwn={isOwn}>
-    <Item>
-      <Bubble>
-        {content}
-      </Bubble>
-      <Time>
-        {time}
-      </Time>
-    </Item>
+    <Message>
+      {!isOwn &&
+        <Avatar>
+          {nickname.substring(0, 2)}
+        </Avatar>
+      }
+      <Item>
+        {!isOwn &&
+          <Nickname>
+            {nickname}
+          </Nickname>
+        }
+        <Bubble>
+          {content}
+        </Bubble>
+        <Time>
+          {time}
+        </Time>
+      </Item>
+    </Message>
   </Wrapper>
 );
 
@@ -55,8 +67,34 @@ const Wrapper = styled.div`
 
 const Time = styled.div`
   font-size: 12px;
-  margin-top: 4px;
+  margin: 4px 8px 0px 8px;
   color: #888;
+`;
+
+const Nickname = styled.div`
+  font-size: 12px;
+  margin: 0px 8px 4px 8px;
+  color: #888;
+`;
+
+const Avatar = styled.div`
+  border-radius: 50%;
+  height: 32px;
+  width: 32px;
+  background-color: ${props => props.theme.secondaryColorLight};
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  text-transform: uppercase;
+  margin-top: 20px;
+  margin-right: 8px;
+`;
+
+const Message = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 MessageItem.propTypes = propTypes;
