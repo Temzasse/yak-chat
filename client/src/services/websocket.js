@@ -19,7 +19,9 @@ const createSocket = store => {
 
   socket.on('CHAT_MESSAGE', msg => {
     console.debug('[SOCKET] TEST', msg);
-    store.chat.addMessage(msg);
+    if (store.chat.activeChannel) {
+      store.chat.addMessage(msg);
+    }
   });
 
   socket.on('disconnect', () => {
