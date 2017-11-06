@@ -77,9 +77,10 @@ class MessageList extends Component {
           />
         )}
 
-        {unseenMessages && !followingMessages &&
-          <UnseenMessages handlePress={this.scrollToBottom} />
-        }
+        <UnseenMessages
+          handlePress={this.scrollToBottom}
+          show={unseenMessages && !followingMessages}
+        />
       </Wrapper>
     );
   }
@@ -91,6 +92,7 @@ const Wrapper = styled.div`
   padding: 16px 16px 0px 16px;
   overflow-y: scroll;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   position: relative;
 
   ::-webkit-scrollbar {
