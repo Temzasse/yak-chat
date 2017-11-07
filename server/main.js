@@ -3,6 +3,7 @@ import IO from 'koa-socket';
 import koaConvert from 'koa-convert';
 import koaBetterBody from 'koa-better-body';
 import cors from 'kcors';
+import redis from 'redis';
 // import Boom from 'boom';
 // import koaRouter from 'koa-router';
 
@@ -24,6 +25,15 @@ app.use(koaConvert(koaBetterBody({
   jsonLimit: '10mb',
 })));
 
+// Redis
+const credentials = {
+  host: 'redis',
+  port: 6379
+};
+const rClient = redis.createClient({
+  host: credentials.host,
+  port: credentials.port
+});
 
 // Middlewares
 // TODO: if needed
@@ -44,42 +54,52 @@ app.use(koaConvert(koaBetterBody({
 // Attach app to chat io instance
 chat.attach(app);
 
-chat.on('message', ctx => {
-  logger.info('message received!', ctx.data);
-  chat.broadcast('response', 'foobar');
-});
-
-
 // TODO: remove
 // Just testing sending messages to the client
 let dummy;
 
-chat.on('connection', () => {
+// chat.on('connection', () => {
+app._io.on('connection', sock => {
   logger.info('socket connected!');
-  let i = 0;
 
-  if (dummy) clearInterval(dummy);
 
-  dummy = setInterval(() => {
-    i += 1;
-    const msg = {
-      content: `Teemu testiviesti ${i}`,
-      timestamp: Date.now(),
-      type: 'message',
-      sender: {
-        id: '99',
-        nickname: 'Julle',
-      }
-    };
+  sock.on('SEND_CHAT_MESSAGE', msg => {
+    rClient.rpush('messages', JSON.stringify(msg));
+    //rClient.ltrim('messages', 0, 5);
+    sock.to('default-channel').emit('CHAT_MESSAGE', msg);
+  });
 
-    chat.broadcast('CHAT_MESSAGE', msg);
-  }, 5000);
+  sock.on('JOIN', data => {
+    const room = data.channel;
+    sock.join(room);
+  });
+
+  const rmessages = rClient.lrange('messages', 0, -1, (err, reply) => {
+    const messages = reply.map(msg => JSON.parse(msg));
+    logger.info('Messages from redis ', messages);
+    chat.broadcast('CHAT_MESSAGE_HISTORY', messages);
+  });
+
+  // let i = 0;
+  // if (dummy) clearInterval(dummy);
+
+  // dummy = setInterval(() => {
+  //   i += 1;
+  //   const msg = {
+  //     content: `Teemu testiviesti ${i}`,
+  //     timestamp: Date.now(),
+  //     type: 'message',
+  //     sender: {
+  //       id: '99',
+  //       nickname: 'Julle',
+  //     }
+  //   };
+  //   rClient.lpush('messages', JSON.stringify(msg));
+  //   rClient.ltrim('messages', 0, 5);
+  //
+  //   chat.broadcast('CHAT_MESSAGE', msg);
+  // }, 5000);
 });
-
-chat.on('join', (ctx, data) => {
-  logger.info('join event fired', data);
-});
-
 
 // Logging handler: log errors only in prod
 app.on('error', (err, ctx) => {

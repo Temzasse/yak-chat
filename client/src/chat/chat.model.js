@@ -36,9 +36,26 @@ const Chat = types
       storage.set('activeChannel', channelId);
     },
 
+    receiveMessage({ content, sender, timestamp = Date.now(), type = 'message' }) {
+      const u = User.create({ ...sender });
+      const msg = { content, sender: u, timestamp, type };
+      self.messages.push(msg);
+
+      /*
+       * Show "You have new messages" thingy if someone else than the current
+       * user added a new message.
+       */
+      const { user } = getParent(self);
+
+      if (!self.followingMessages && sender.id !== user.id) {
+        self.unseenMessages = true;
+      }
+    },
+
     addMessage({ content, sender, timestamp = Date.now(), type = 'message' }) {
       const u = User.create({ ...sender });
-      self.messages.push({ content, sender: u, timestamp, type });
+      const msg = { content, sender: u, timestamp, type };
+      self.messages.push(msg);
 
       /*
        * Show "You have new messages" thingy if someone else than the current
