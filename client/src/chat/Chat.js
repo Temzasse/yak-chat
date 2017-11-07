@@ -17,7 +17,6 @@ import ChatHeader from './ChatHeader';
 
 class Chat extends Component {
   static propTypes = {
-    fetchMessages: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
     user: PropTypes.object.isRequired,
     addMessage: PropTypes.func.isRequired,
@@ -30,10 +29,6 @@ class Chat extends Component {
 
   state = {
     sidebarOpen: false,
-  }
-
-  componentWillMount() {
-    this.props.fetchMessages();
   }
 
   toggleSidebarOpen = () => {
@@ -114,7 +109,6 @@ const Loader = styled.div`
 `;
 
 export default inject(({ store: { chat, user } }) => ({
-  fetchMessages: chat.fetchMessages,
   addMessage: chat.addMessage,
   messages: chat.messages,
   loading: chat.loading,

@@ -25,15 +25,23 @@ const Chat = types
     },
 
     joinChannel(channelId) {
-      console.debug('[channelId]', channelId);
       self.activeChannel = channelId;
       storage.set('activeChannel', channelId);
-      // TODO: fetch messages
+      /**
+       * NOTE:
+       * Messages are fetched automatically with `onPatch` listener
+       * in /services/websocket.
+       */
     },
 
     createChannel(channelId) {
       self.activeChannel = channelId;
       storage.set('activeChannel', channelId);
+      /**
+       * NOTE:
+       * Messages are fetched automatically with `onPatch` listener
+       * in /services/websocket.
+       */
     },
 
     receiveMessage({ content, sender, timestamp = Date.now(), type = 'message' }) {
@@ -77,6 +85,7 @@ const Chat = types
       self.followingMessages = false;
     },
 
+    // NOTE: this is only used for dev testing
     fetchMessages: flow(function* fetchMessages() {
       self.loading = true;
 
