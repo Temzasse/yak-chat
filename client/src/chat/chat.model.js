@@ -7,7 +7,7 @@ const Message = types
     content: '',
     type: types.optional(types.string, 'message'),
     timestamp: types.optional(types.number, () => Date.now()),
-    sender: types.reference(types.late(() => User)),
+    sender: types.reference(User),
   });
 
 const Chat = types
@@ -21,11 +21,11 @@ const Chat = types
   .actions(self => ({
     fetchChannel() {
       const activeChannel = storage.get('activeChannel');
-      if (activeChannel) self.activeChannel = activeChannel;
-      // TODO: fetch messages
+      if (activeChannel) self.joinChannel(activeChannel);
     },
 
     joinChannel(channelId) {
+      console.debug('[channelId]', channelId);
       self.activeChannel = channelId;
       storage.set('activeChannel', channelId);
       // TODO: fetch messages

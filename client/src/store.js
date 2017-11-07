@@ -8,17 +8,11 @@ const RootStore = types
     user: types.maybe(User),
     userFetched: false,
     chat: types.optional(Chat, {}),
-    foo: ''
   })
   .actions(self => ({
     fetchUser() {
       const user = storage.get('user');
-
-      if (user) {
-        // TODO: remove manual id
-        self.user = User.create({ ...user, id: '2' });
-      }
-
+      if (user) self.user = User.create(user);
       self.userFetched = true;
     },
 
@@ -27,10 +21,6 @@ const RootStore = types
       storage.set('user', user);
       self.user = User.create(user);
     },
-
-    updateFoo() {
-      self.foo = 'bar';
-    }
   }))
   // Same as Redux selectors
   .views(self => ({

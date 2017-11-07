@@ -56,28 +56,40 @@ chat.attach(app);
 
 // TODO: remove
 // Just testing sending messages to the client
-let dummy;
+// let dummy;
 
-// chat.on('connection', () => {
 app._io.on('connection', sock => {
   logger.info('socket connected!');
 
+  sock.on('SEND_CHAT_MESSAGE', ({ channelId, msg }) => {
+    rClient.rpush(channelId, JSON.stringify(msg));
+    // rClient.ltrim('messages', 0, 5);
 
-  sock.on('SEND_CHAT_MESSAGE', msg => {
-    rClient.rpush('messages', JSON.stringify(msg));
-    //rClient.ltrim('messages', 0, 5);
-    sock.to('default-channel').emit('CHAT_MESSAGE', msg);
+    // Send message to channel
+    sock.to(channelId).emit('CHAT_MESSAGE', msg);
   });
 
-  sock.on('JOIN', data => {
-    const room = data.channel;
-    sock.join(room);
+  sock.on('JOIN_CHANNEL', channelId => {
+    sock.join(channelId);
+
+    rClient.lrange(channelId, 0, -1, (err, reply) => {
+      let messages;
+
+      try {
+        messages = reply.map(msg => JSON.parse(msg));
+      } catch (error) {
+        logger.error('Failed to parse messages for channel', channelId, error);
+      }
+
+      if (messages.length > 0) {
+        logger.info(`Messages for channel: ${channelId}`, messages);
+        sock.emit('CHAT_MESSAGE_HISTORY', messages);
+      }
+    });
   });
 
-  const rmessages = rClient.lrange('messages', 0, -1, (err, reply) => {
-    const messages = reply.map(msg => JSON.parse(msg));
-    logger.info('Messages from redis ', messages);
-    chat.broadcast('CHAT_MESSAGE_HISTORY', messages);
+  sock.on('LEAVE_CHANNEL', channelId => {
+    sock.leave(channelId);
   });
 
   // let i = 0;
