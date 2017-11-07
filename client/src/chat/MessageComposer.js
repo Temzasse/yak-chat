@@ -47,7 +47,7 @@ class MessageComposer extends Component {
         <Input
           value={message}
           onChange={this.handleChange}
-          placeholder='Yak to your mates...'
+          placeholder='Yak to your buddies...'
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
         />

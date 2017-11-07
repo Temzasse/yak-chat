@@ -4,7 +4,7 @@
 ///////////////////////
 */
 
-import { onAction, onPatch } from 'mobx-state-tree'
+import { onAction, onPatch } from 'mobx-state-tree';
 import io from 'socket.io-client';
 import config from '../config';
 
@@ -18,14 +18,12 @@ const createSocket = store => {
   });
 
   socket.on('CHAT_MESSAGE', msg => {
-    console.debug('[SOCKET] CHAT_MESSAGE received', msg);
     if (store.chat.activeChannel) {
       store.chat.receiveMessage(msg);
     }
   });
 
   socket.on('CHAT_MESSAGE_HISTORY', messages => {
-    console.debug('[SOCKET] CHAT_MESSAGE_HISTORY', messages);
     if (store.chat.activeChannel && messages.length > 0) {
       messages.forEach(m => store.chat.receiveMessage(m));
     }
@@ -35,12 +33,18 @@ const createSocket = store => {
     console.debug('[SOCKET] disconnected!');
   });
 
+  /**
+   * Listen to store actions and changes and emit socket messages accordingly
+   *
+   * NOTE: onAction does not fire for actions called inside other actions
+   * which is why we need to use onPatch for some use cases.
+   */
+
   onAction(store, ({ name, args }) => {
     switch (name) {
     case 'addMessage': {
-      const msg = args[0];
       socket.emit('SEND_CHAT_MESSAGE', {
-        msg,
+        msg: args[0],
         channelId: store.chat.activeChannel,
       });
       break;
@@ -57,7 +61,6 @@ const createSocket = store => {
 
   onPatch(store.chat, ({ path, value }) => {
     if (path === '/activeChannel' && value) {
-      console.debug('[JOIN CHANNEL]', value);
       socket.emit('JOIN_CHANNEL', value);
     }
   });

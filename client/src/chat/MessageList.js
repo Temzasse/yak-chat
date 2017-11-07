@@ -62,6 +62,9 @@ class MessageList extends Component {
   render() {
     const { messages, user, unseenMessages, followingMessages } = this.props;
 
+    const hasScrollBars =
+      this.listNode && this.listNode.scrollHeight > this.listNode.clientHeight;
+
     return (
       <Wrapper
         innerRef={node => { this.listNode = node; }}
@@ -80,7 +83,7 @@ class MessageList extends Component {
 
         <UnseenMessages
           handlePress={this.scrollToBottom}
-          show={unseenMessages && !followingMessages}
+          show={unseenMessages && !followingMessages && hasScrollBars}
         />
       </Wrapper>
     );
