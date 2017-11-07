@@ -35,28 +35,8 @@ const rClient = redis.createClient({
   port: credentials.port
 });
 
-// Middlewares
-// TODO: if needed
-
-// Router
-// TODO: if needed
-// const router = koaRouter();
-// routes(router); // Inject router to all routes
-
-// app.use(router.routes());
-// app.use(router.allowedMethods({
-//   throw: true,
-//   notImplemented: () => Boom.notImplemented(),
-//   methodNotAllowed: () => Boom.methodNotAllowed(),
-// }));
-
-
 // Attach app to chat io instance
 chat.attach(app);
-
-// TODO: remove
-// Just testing sending messages to the client
-// let dummy;
 
 app._io.on('connection', sock => {
   logger.info('socket connected!');
@@ -82,7 +62,7 @@ app._io.on('connection', sock => {
       }
 
       if (messages.length > 0) {
-        logger.info(`Messages for channel: ${channelId}`, messages);
+        // logger.info(`Messages for channel: ${channelId}`, messages);
         sock.emit('CHAT_MESSAGE_HISTORY', messages);
       }
     });
@@ -91,26 +71,6 @@ app._io.on('connection', sock => {
   sock.on('LEAVE_CHANNEL', channelId => {
     sock.leave(channelId);
   });
-
-  // let i = 0;
-  // if (dummy) clearInterval(dummy);
-
-  // dummy = setInterval(() => {
-  //   i += 1;
-  //   const msg = {
-  //     content: `Teemu testiviesti ${i}`,
-  //     timestamp: Date.now(),
-  //     type: 'message',
-  //     sender: {
-  //       id: '99',
-  //       nickname: 'Julle',
-  //     }
-  //   };
-  //   rClient.lpush('messages', JSON.stringify(msg));
-  //   rClient.ltrim('messages', 0, 5);
-  //
-  //   chat.broadcast('CHAT_MESSAGE', msg);
-  // }, 5000);
 });
 
 // Logging handler: log errors only in prod
