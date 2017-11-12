@@ -17,16 +17,16 @@ import logo from '../assets/logo.svg';
 const propTypes = {
   joinChannel: PropTypes.func.isRequired,
   createChannel: PropTypes.func.isRequired,
+  generatedChannelId: PropTypes.string,
 };
 
 class JoinChannel extends Component {
   state = {
     channelId: '',
-    generatedChannelId: 'rotten-volcano', // TODO: generate this...
   }
 
   createChannel = () => {
-    const { generatedChannelId } = this.state;
+    const { generatedChannelId } = this.props;
     this.props.createChannel(generatedChannelId);
   }
 
@@ -36,7 +36,8 @@ class JoinChannel extends Component {
   }
 
   render() {
-    const { channelId, generatedChannelId } = this.state;
+    const { channelId } = this.state;
+    const { generatedChannelId } = this.props;
 
     return (
       <JoinChannelWrapper>
@@ -104,7 +105,7 @@ const JoinChannelWrapper = styled.div`
   align-items: center;
   justify-content: center;
   background-color: ${props => props.theme.secondaryColorLightest};
-  
+
   ${media.tablet`
     padding: 16px;
   `}
@@ -140,4 +141,5 @@ JoinChannel.propTypes = propTypes;
 export default inject(({ store }) => ({
   joinChannel: store.chat.joinChannel,
   createChannel: store.chat.createChannel,
+  generatedChannelId: store.chat.generatedChannelId,
 }))(observer(JoinChannel));

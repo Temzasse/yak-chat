@@ -15,6 +15,7 @@ const createSocket = store => {
 
   socket.on('connect', () => {
     console.debug('[SOCKET] connected!');
+    socket.emit('GENERATE_CHANNEL_ID');
   });
 
   socket.on('CHAT_MESSAGE', ({ channelId, msg }) => {
@@ -24,6 +25,10 @@ const createSocket = store => {
   socket.on('CHAT_MESSAGE_HISTORY', ({ channelId, messages }) => {
     messages.forEach(msg => store.chat.receiveMessage({ channelId, msg }));
     store.chat.activeChannel.setLoading(false);
+  });
+
+  socket.on('GENERATED_CHANNEL_ID', channelId => {
+    store.chat.updateGeneratedChannelId(channelId);
   });
 
   socket.on('disconnect', () => {

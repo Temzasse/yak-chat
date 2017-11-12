@@ -8,6 +8,7 @@ const Chat = types
   .model({
     activeChannel: types.maybe(types.reference(Channel)),
     channels: types.optional(types.map(Channel), {}),
+    generatedChannelId: types.maybe(types.string),
   })
   .actions(self => ({
     fetchChannels() {
@@ -79,6 +80,10 @@ const Chat = types
       const msg = { content, sender: u, timestamp, type };
       self.activeChannel.messages.push(msg);
     },
+
+    updateGeneratedChannelId(channelId) {
+      self.generatedChannelId = channelId;
+    }
   }))
   .views(self => ({
     getMessages() {

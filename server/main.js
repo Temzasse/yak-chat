@@ -11,6 +11,8 @@ import config from './config';
 import logger from './logger';
 // import routes from './routes';
 
+import generateChannelId from './generator/generate';
+
 const app = new Koa();
 const chat = new IO();
 
@@ -67,6 +69,10 @@ app._io.on('connection', sock => {
 
   sock.on('LEAVE_CHANNEL', channelId => {
     sock.leave(channelId);
+  });
+
+  sock.on('GENERATE_CHANNEL_ID', () => {
+    sock.emit('GENERATED_CHANNEL_ID', generateChannelId());
   });
 });
 
