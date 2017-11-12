@@ -32,3 +32,10 @@ services:
       - 'REDIS_PASS=**None**'
     ports:
       - "6379:6379"
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - './db:/data/db'

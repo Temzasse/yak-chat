@@ -2,8 +2,10 @@ import Koa from 'koa';
 import IO from 'koa-socket';
 import koaConvert from 'koa-convert';
 import koaBetterBody from 'koa-better-body';
+import mongoose from 'mongoose';
 import cors from 'kcors';
 import redis from 'redis';
+import Message from './models/message';
 // import Boom from 'boom';
 // import koaRouter from 'koa-router';
 
@@ -25,6 +27,16 @@ app.use(koaConvert(koaBetterBody({
   jsonLimit: '10mb',
 })));
 
+// Mongoose
+mongoose.connect('mongodb://mongodb/test');
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
+  console.debug('Mongo connection open');
+  // we're connected!
+});
+
 // Redis
 const credentials = {
   host: 'redis',
@@ -42,15 +54,18 @@ app._io.on('connection', sock => {
   logger.info('socket connected!');
 
   sock.on('SEND_CHAT_MESSAGE', ({ channelId, msg }) => {
+    console.debug('CHAT MSG ', msg);
+    Message.create({ msg }, (err, createdMessage) => {
+      console.debug('Message created? ', err, createdMessage);
+    });
     rClient.rpush(channelId, JSON.stringify(msg));
-
     // Send message to channel
     sock.to(channelId).emit('CHAT_MESSAGE', ({ channelId, msg }));
   });
 
   sock.on('JOIN_CHANNEL', channelId => {
     sock.join(channelId);
-
+    console.debug('join channel ', channelId);
     rClient.lrange(channelId, 0, -1, (err, reply) => {
       let messages;
 
