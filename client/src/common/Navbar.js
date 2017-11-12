@@ -9,13 +9,18 @@ import Text from 'react-components-kit/dist/Text';
 
 const propTypes = {
   onMenuPress: PropTypes.func.isRequired,
+  activeChannel: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const Navbar = ({ onMenuPress, activeChannel }) => (
   <NavbarWrapper>
     <NavIcon onClick={onMenuPress} />
     <Gutter />
-    <Text bold>{activeChannel}</Text>
+    <Text bold>
+      {activeChannel ? activeChannel.id : ''}
+    </Text>
   </NavbarWrapper>
 );
 

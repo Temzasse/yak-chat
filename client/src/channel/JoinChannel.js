@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
-import { Redirect } from 'react-router-dom';
 
 import Heading from 'react-components-kit/dist/Heading';
 import Text from 'react-components-kit/dist/Text';
@@ -38,13 +37,6 @@ class JoinChannel extends Component {
 
   render() {
     const { channelId, generatedChannelId } = this.state;
-    const { activeChannel } = this.props;
-
-    if (activeChannel) {
-      return (
-        <Redirect to='/' />
-      );
-    }
 
     return (
       <JoinChannelWrapper>
@@ -148,5 +140,4 @@ JoinChannel.propTypes = propTypes;
 export default inject(({ store }) => ({
   joinChannel: store.chat.joinChannel,
   createChannel: store.chat.createChannel,
-  activeChannel: store.chat.activeChannel,
 }))(observer(JoinChannel));

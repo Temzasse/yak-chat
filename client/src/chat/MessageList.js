@@ -81,16 +81,19 @@ class MessageList extends Component {
           />
         )}
 
-        <UnseenMessages
-          handlePress={this.scrollToBottom}
-          show={unseenMessages && !followingMessages && hasScrollBars}
-        />
+        {messages.length > 0 &&
+          <UnseenMessages
+            handlePress={this.scrollToBottom}
+            show={!!(unseenMessages && !followingMessages && hasScrollBars)}
+          />
+        }
       </Wrapper>
     );
   }
 }
 
 const Wrapper = styled.div`
+  flex: 1;
   height: 100%;
   width: 100%;
   padding: 16px 16px 0px 16px;

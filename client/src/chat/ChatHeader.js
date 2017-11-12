@@ -6,13 +6,15 @@ import media from 'react-components-kit/dist/media';
 import Text from 'react-components-kit/dist/Text';
 
 const propTypes = {
-  activeChannel: PropTypes.string.isRequired,
+  activeChannel: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const ChatHeader = ({ activeChannel }) => (
   <ChatHeaderWrapper>
     <Text size='18px' bold>
-      {activeChannel}
+      {activeChannel ? activeChannel.id : ''}
     </Text>
   </ChatHeaderWrapper>
 );

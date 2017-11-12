@@ -1,30 +1,23 @@
-import { types, flow, getParent } from 'mobx-state-tree';
+import { types, getParent } from 'mobx-state-tree';
 import storage from 'store';
 import User from '../user/user.model';
-
-const Message = types
-  .model({
-    content: '',
-    type: types.optional(types.string, 'message'),
-    timestamp: types.optional(types.number, () => Date.now()),
-    sender: types.reference(User),
-  });
+import Channel from '../channel/channel.model';
 
 const Chat = types
   .model({
-    loading: false,
-    unseenMessages: false,
-    followingMessages: false,
-    messages: types.optional(types.array(Message), []),
-    activeChannel: types.maybe(types.string),
+    activeChannel: types.maybe(types.reference(Channel)),
+    channels: types.optional(types.map(Channel), {}),
   })
   .actions(self => ({
-    fetchChannel() {
+    fetchActiveChannel() {
       const activeChannel = storage.get('activeChannel');
       if (activeChannel) self.joinChannel(activeChannel);
     },
 
+    // TODO: is there any difference between joinChannel and createChannel?
     joinChannel(channelId) {
+      const channel = Channel.create({ id: channelId });
+      self.channels.put(channel);
       self.activeChannel = channelId;
       storage.set('activeChannel', channelId);
       /**
@@ -35,6 +28,8 @@ const Chat = types
     },
 
     createChannel(channelId) {
+      const channel = Channel.create({ id: channelId });
+      self.channels.put(channel);
       self.activeChannel = channelId;
       storage.set('activeChannel', channelId);
       /**
@@ -44,64 +39,37 @@ const Chat = types
        */
     },
 
-    receiveMessage({ content, sender, timestamp = Date.now(), type = 'message' }) {
+    receiveMessage({ channelId, msg }) {
+      const { content, sender, timestamp = Date.now(), type = 'message' } = msg;
       const u = User.create({ ...sender });
-      const msg = { content, sender: u, timestamp, type };
-      self.messages.push(msg);
+      const channel = self.channels.get(channelId);
+      channel.messages.push({ content, sender: u, timestamp, type });
 
-      /*
-       * Show "You have new messages" thingy if someone else than the current
-       * user added a new message.
-       */
       const { user } = getParent(self);
 
-      if (!self.followingMessages && sender.id !== user.id) {
-        self.unseenMessages = true;
+      // Show "You have new messages" thingy if someone else than the current
+      // user added a new message.
+      if (channel === self.activeChannel) {
+        if (!self.activeChannel.followingMessages && sender.id !== user.id) {
+          channel.unseenMessages = true;
+        }
+      } else {
+        // Or show a red dot in the sidebar if the channel that received
+        // the message wasn't the active channel.
+        channel.unseenMessages = true;
       }
     },
 
     addMessage({ content, sender, timestamp = Date.now(), type = 'message' }) {
       const u = User.create({ ...sender });
       const msg = { content, sender: u, timestamp, type };
-      self.messages.push(msg);
-
-      /*
-       * Show "You have new messages" thingy if someone else than the current
-       * user added a new message.
-       */
-      const { user } = getParent(self);
-
-      if (!self.followingMessages && sender.id !== user.id) {
-        self.unseenMessages = true;
-      }
+      self.activeChannel.messages.push(msg);
     },
-
-    followMessages() {
-      self.followingMessages = true;
-      self.unseenMessages = false;
-    },
-
-    unfollowMessages() {
-      self.followingMessages = false;
-    },
-
-    // NOTE: this is only used for dev testing
-    fetchMessages: flow(function* fetchMessages() {
-      self.loading = true;
-
-      try {
-        // TODO: user self.activeChannel here to fetch messages
-        const messages = yield fetch('/messages.json').then(res => res.json());
-        self.messages = messages
-          .map(msg => ({ ...msg, sender: User.create(msg.sender) }))
-          .sort((a, b) => a.timestamp - b.timestamp);
-      } catch (e) {
-        console.log('Error in fetchMessages', e);
-        throw e;
-      }
-
-      self.loading = false;
-    }),
+  }))
+  .views(self => ({
+    getMessages() {
+      return self.activeChannel.messages;
+    }
   }));
 
 export default Chat;

@@ -17,16 +17,13 @@ const createSocket = store => {
     console.debug('[SOCKET] connected!');
   });
 
-  socket.on('CHAT_MESSAGE', msg => {
-    if (store.chat.activeChannel) {
-      store.chat.receiveMessage(msg);
-    }
+  socket.on('CHAT_MESSAGE', ({ channelId, msg }) => {
+    store.chat.receiveMessage({ channelId, msg });
   });
 
-  socket.on('CHAT_MESSAGE_HISTORY', messages => {
-    if (store.chat.activeChannel && messages.length > 0) {
-      messages.forEach(m => store.chat.receiveMessage(m));
-    }
+  socket.on('CHAT_MESSAGE_HISTORY', ({ channelId, messages }) => {
+    messages.forEach(msg => store.chat.receiveMessage({ channelId, msg }));
+    store.chat.activeChannel.setLoading(false);
   });
 
   socket.on('disconnect', () => {
@@ -45,12 +42,12 @@ const createSocket = store => {
     case 'addMessage': {
       socket.emit('SEND_CHAT_MESSAGE', {
         msg: args[0],
-        channelId: store.chat.activeChannel,
+        channelId: store.chat.activeChannel.id,
       });
       break;
     }
     case 'leaveChannel': {
-      const channelId = args[0] || store.chat.activeChannel;
+      const channelId = args[0] || store.chat.activeChannel.id;
       socket.emit('LEAVE_CHANNEL', channelId);
       break;
     }
@@ -61,6 +58,8 @@ const createSocket = store => {
 
   onPatch(store.chat, ({ path, value }) => {
     if (path === '/activeChannel' && value) {
+      // Active channel has changed => join the new channel
+      store.chat.activeChannel.setLoading(true);
       socket.emit('JOIN_CHANNEL', value);
     }
   });

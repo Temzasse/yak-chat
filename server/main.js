@@ -43,10 +43,9 @@ app._io.on('connection', sock => {
 
   sock.on('SEND_CHAT_MESSAGE', ({ channelId, msg }) => {
     rClient.rpush(channelId, JSON.stringify(msg));
-    // rClient.ltrim('messages', 0, 5);
 
     // Send message to channel
-    sock.to(channelId).emit('CHAT_MESSAGE', msg);
+    sock.to(channelId).emit('CHAT_MESSAGE', ({ channelId, msg }));
   });
 
   sock.on('JOIN_CHANNEL', channelId => {
@@ -61,10 +60,8 @@ app._io.on('connection', sock => {
         logger.error('Failed to parse messages for channel', channelId, error);
       }
 
-      if (messages.length > 0) {
-        // logger.info(`Messages for channel: ${channelId}`, messages);
-        sock.emit('CHAT_MESSAGE_HISTORY', messages);
-      }
+      // Always return history even if there are no messages!
+      sock.emit('CHAT_MESSAGE_HISTORY', ({ channelId, messages }));
     });
   });
 

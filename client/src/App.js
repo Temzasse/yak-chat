@@ -12,10 +12,16 @@ import Chat from './chat/Chat';
 import CreateUser from './user/CreateUser';
 import JoinChannel from './channel/JoinChannel';
 
+let DevTools = null;
+
+if (process.env.NODE_ENV !== 'production') {
+  DevTools = require('mobx-react-devtools').default; // eslint-disable-line
+}
+
 class App extends Component {
   componentWillMount() {
     this.props.fetchUser();
-    this.props.fetchChannel();
+    this.props.fetchActiveChannel();
   }
 
   render() {
@@ -29,9 +35,12 @@ class App extends Component {
         <Router>
           <div>
             <Switch>
-              <Route exact path='/' component={Chat} />
+              <Route path='/chat' component={Chat} />
               <Route path='/create-user' component={CreateUser} />
               <Route path='/join-channel' component={JoinChannel} />
+
+              {/* If we dont hit any above paths redirect to chat */}
+              <Redirect to='/chat' />
             </Switch>
 
             {!user &&
@@ -41,8 +50,14 @@ class App extends Component {
             {user && !activeChannel &&
               <Redirect to='/join-channel' />
             }
+
+            {user && activeChannel &&
+              <Redirect to={`/chat/${activeChannel.id}`} />
+            }
           </div>
         </Router>
+
+        <DevTools />
       </AppWrapper>
     );
   }
@@ -62,5 +77,5 @@ export default inject(({ store }) => ({
   userFetched: store.userFetched,
   fetchUser: store.fetchUser,
   activeChannel: store.chat.activeChannel,
-  fetchChannel: store.chat.fetchChannel,
+  fetchActiveChannel: store.chat.fetchActiveChannel,
 }))(AppView);
