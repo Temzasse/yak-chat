@@ -40,7 +40,6 @@ const createSocket = store => {
   onAction(store, ({ name, args }) => {
     switch (name) {
     case 'addMessage': {
-      console.debug('Chat msg ', args[0]);
       socket.emit('SEND_CHAT_MESSAGE', {
         msg: args[0],
         channelId: store.chat.activeChannel.id,

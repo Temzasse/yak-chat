@@ -1,9 +1,19 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const channelSchema = new mongoose.Schema({
-  title: String
+const { ObjectId } = mongoose.Schema.Types;
+
+const ChannelSchema = new mongoose.Schema({
+  name: String,
+  messages: [{
+    type: ObjectId,
+    ref: 'Message'
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-module.exports = {
-  channelSchema
-};
+const Channel = mongoose.model('Channel', ChannelSchema);
+
+module.exports = Channel;

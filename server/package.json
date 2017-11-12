@@ -35,7 +35,6 @@
     "koa-socket": "^4.4.0",
     "lodash": "^4.17.4",
     "mongoose": "^4.13.1",
-    "redis": "^2.8.0",
     "winston": "3.0.0-rc0"
   }
 }

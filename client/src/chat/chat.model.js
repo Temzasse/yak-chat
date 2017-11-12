@@ -40,7 +40,7 @@ const Chat = types
     },
 
     receiveMessage({ channelId, msg }) {
-      const { content, sender, timestamp = Date.now(), type = 'message' } = msg;
+      const { content, sender, timestamp = '', type = 'message' } = msg;
       const u = User.create({ ...sender });
       const channel = self.channels.get(channelId);
       channel.messages.push({ content, sender: u, timestamp, type });
@@ -60,7 +60,7 @@ const Chat = types
       }
     },
 
-    addMessage({ content, sender, timestamp = Date.now(), type = 'message' }) {
+    addMessage({ content, sender, timestamp = '', type = 'message' }) {
       const u = User.create({ ...sender });
       const msg = { content, sender: u, timestamp, type };
       self.activeChannel.messages.push(msg);

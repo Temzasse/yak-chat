@@ -5,7 +5,8 @@ const Message = types
   .model({
     content: '',
     type: types.optional(types.string, 'message'),
-    timestamp: types.optional(types.number, () => Date.now()),
+    // timestamp: types.optional(types.number, () => Date.now()),
+    timestamp: types.optional(types.string, ''),
     sender: types.reference(User),
   });
 
