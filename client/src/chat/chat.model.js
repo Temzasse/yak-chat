@@ -1,7 +1,8 @@
 import { types, getParent } from 'mobx-state-tree';
-import storage from 'store';
+import storage from '../services/storage';
 import User from '../user/user.model';
 import Channel from '../channel/channel.model';
+import { alphabetically } from '../services/utils';
 
 const Chat = types
   .model({
@@ -9,9 +10,16 @@ const Chat = types
     channels: types.optional(types.map(Channel), {}),
   })
   .actions(self => ({
-    fetchActiveChannel() {
-      const activeChannel = storage.get('activeChannel');
+    fetchChannels() {
+      const activeChannel = storage.getActiveChannel();
+      const channels = storage.getChannels();
+
       if (activeChannel) self.joinChannel(activeChannel);
+
+      channels.forEach(channelId => {
+        const channel = Channel.create({ id: channelId });
+        self.channels.put(channel);
+      });
     },
 
     // TODO: is there any difference between joinChannel and createChannel?
@@ -19,7 +27,7 @@ const Chat = types
       const channel = Channel.create({ id: channelId });
       self.channels.put(channel);
       self.activeChannel = channelId;
-      storage.set('activeChannel', channelId);
+      storage.setActiveChannel(channelId);
       /**
        * NOTE:
        * Messages are fetched automatically with `onPatch` listener
@@ -31,12 +39,18 @@ const Chat = types
       const channel = Channel.create({ id: channelId });
       self.channels.put(channel);
       self.activeChannel = channelId;
-      storage.set('activeChannel', channelId);
+      storage.setActiveChannel(channelId);
+      storage.addChannel(channelId);
       /**
        * NOTE:
        * Messages are fetched automatically with `onPatch` listener
        * in /services/websocket.
        */
+    },
+
+    setActiveChannel(channelId) {
+      self.activeChannel = channelId;
+      storage.setActiveChannel(channelId);
     },
 
     receiveMessage({ channelId, msg }) {
@@ -69,6 +83,10 @@ const Chat = types
   .views(self => ({
     getMessages() {
       return self.activeChannel.messages;
+    },
+
+    getChannels() {
+      return self.channels.values().sort(alphabetically);
     }
   }));
 

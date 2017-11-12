@@ -60,7 +60,7 @@ const Wrapper = styled.div`
 
     ${Bubble} {
       color: #fff;
-      background-color: ${props.theme.primaryColorLightest};
+      background-color: ${props.theme.primaryColorLight};
     }
   `}
 `;
