@@ -34,8 +34,10 @@ class Chat extends Component {
           <Link to='/join-channel'>
             <BlockButton flat>
               <NewIcon />
-              <Gutter amount='8px' />
-              New channel
+              {sidebarOpen && [
+                <Gutter amount='8px' />,
+                <span>New channel</span>
+              ]}
             </BlockButton>
           </Link>
         </Sidebar>

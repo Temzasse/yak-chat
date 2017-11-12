@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import media from 'react-components-kit/dist/media';
+import ToggleIcon from 'react-icons/lib/md/arrow-forward';
 
 const propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -16,6 +17,10 @@ const Sidebar = ({ isOpen, toggleOpen, children }) => (
         <CloseButton onClick={toggleOpen}>
           &times;
         </CloseButton>
+
+        <ToggleButton onClick={toggleOpen}>
+          <ToggleIcon />
+        </ToggleButton>
       </Head>
 
       <Items>
@@ -34,14 +39,24 @@ const fadeIn = keyframes`
   to { opacity: 1; }
 `;
 
+const SIDEBAR_W = 250;
+
 const Head = styled.div`
   justify-content: flex-end;
-  padding: 4px;
-  display: none;
+`;
 
-  ${media.tablet`
-    display: flex;
-  `}
+const ToggleButton = styled.div`
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-bottom: 1px solid ${props => props.theme.primaryColorDarkest};
+
+  & > svg {
+    height: 20px;
+    width: 20px;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -50,6 +65,12 @@ const CloseButton = styled.button`
   font-size: 24px;
   font-family: Arial, Helvetica, sans-serif;
   color: #fff;
+  display: none;
+
+  ${media.tablet`
+    display: block;
+    margin-left: auto;
+  `}
 `;
 
 const Backdrop = styled.div`
@@ -69,7 +90,7 @@ const Backdrop = styled.div`
 `;
 
 const Items = styled.div`
-  padding: 16px;
+  padding: 12px 8px;
 
   ${media.tablet`
     padding: 24px 16px;
@@ -77,11 +98,22 @@ const Items = styled.div`
 `;
 
 const Menu = styled.div`
-  width: 250px;
+  width: 70px;
   height: 100vh;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   background: ${props => props.theme.primaryColorDarker};
+  transition: width 0.3s ease;
+
+  ${props => props.isOpen && css`
+    width: ${SIDEBAR_W}px;
+
+    ${ToggleButton} {
+      transition: transform 0.3s ease;
+      transform: rotate(180deg);
+    }
+  `}
 
   ${media.tablet`
     width: 80%;
@@ -94,6 +126,10 @@ const Menu = styled.div`
     opacity: ${props => props.isOpen ? 1 : 0};
     transform: translateX(${props => props.isOpen ? 0 : -100}%);
     transition: transform 0.4s cubic-bezier(0.2, 0.71, 0.14, 0.91);
+
+    ${ToggleButton} {
+      display: none;
+    }
   `}
 `;
 
