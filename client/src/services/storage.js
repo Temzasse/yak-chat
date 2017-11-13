@@ -1,6 +1,14 @@
 import store from 'store';
 
 const storage = {
+  setUser(user) {
+    store.set('user', user);
+  },
+
+  getUser() {
+    return store.get('user');
+  },
+
   setActiveChannel(channelId) {
     store.set('activeChannel', channelId);
   },

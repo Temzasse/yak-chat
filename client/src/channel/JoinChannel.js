@@ -14,15 +14,20 @@ import media from 'react-components-kit/dist/media';
 
 import logo from '../assets/logo.svg';
 
-const propTypes = {
-  joinChannel: PropTypes.func.isRequired,
-  createChannel: PropTypes.func.isRequired,
-  generatedChannelId: PropTypes.string,
-};
-
 class JoinChannel extends Component {
+  static propTypes = {
+    joinChannel: PropTypes.func.isRequired,
+    createChannel: PropTypes.func.isRequired,
+    generateChannelId: PropTypes.func.isRequired,
+    generatedChannelId: PropTypes.string,
+  }
+
   state = {
     channelId: '',
+  }
+
+  componentWillMount() {
+    this.props.generateChannelId();
   }
 
   createChannel = () => {
@@ -136,10 +141,9 @@ const ChannelName = styled.div`
   color: ${props => props.theme.secondaryColor};
 `;
 
-JoinChannel.propTypes = propTypes;
-
 export default inject(({ store }) => ({
   joinChannel: store.chat.joinChannel,
   createChannel: store.chat.createChannel,
   generatedChannelId: store.chat.generatedChannelId,
+  generateChannelId: store.chat.generateChannelId,
 }))(observer(JoinChannel));
