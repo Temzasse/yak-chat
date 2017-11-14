@@ -57,6 +57,7 @@ class Chat extends Component {
             <Link to={`/chat/${channel.id}`} key={channel.id}>
               <ChannelButton
                 active={channel.id === activeChannel.id}
+                sidebarOpen={sidebarOpen}
                 onClick={() => this.props.setActiveChannel(channel.id)}
               >
                 {sidebarOpen ?
@@ -119,6 +120,7 @@ const ChannelButton = styled.button`
     ? props.theme.secondaryColorLight
     : props.theme.primaryColorLightest};
   }
+  ${props => props.sidebarOpen && 'border-width: 0px;'}
 `;
 
 const ChannelActiveIndicator = styled.div`
