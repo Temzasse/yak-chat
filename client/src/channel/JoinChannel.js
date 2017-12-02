@@ -14,19 +14,24 @@ import media from 'react-components-kit/dist/media';
 
 import logo from '../assets/logo.svg';
 
-const propTypes = {
-  joinChannel: PropTypes.func.isRequired,
-  createChannel: PropTypes.func.isRequired,
-};
-
 class JoinChannel extends Component {
+  static propTypes = {
+    joinChannel: PropTypes.func.isRequired,
+    createChannel: PropTypes.func.isRequired,
+    generateChannelId: PropTypes.func.isRequired,
+    generatedChannelId: PropTypes.string,
+  }
+
   state = {
     channelId: '',
-    generatedChannelId: 'rotten-volcano', // TODO: generate this...
+  }
+
+  componentWillMount() {
+    this.props.generateChannelId();
   }
 
   createChannel = () => {
-    const { generatedChannelId } = this.state;
+    const { generatedChannelId } = this.props;
     this.props.createChannel(generatedChannelId);
   }
 
@@ -36,7 +41,8 @@ class JoinChannel extends Component {
   }
 
   render() {
-    const { channelId, generatedChannelId } = this.state;
+    const { channelId } = this.state;
+    const { generatedChannelId } = this.props;
 
     return (
       <JoinChannelWrapper>
@@ -104,7 +110,7 @@ const JoinChannelWrapper = styled.div`
   align-items: center;
   justify-content: center;
   background-color: ${props => props.theme.secondaryColorLightest};
-  
+
   ${media.tablet`
     padding: 16px;
   `}
@@ -135,9 +141,9 @@ const ChannelName = styled.div`
   color: ${props => props.theme.secondaryColor};
 `;
 
-JoinChannel.propTypes = propTypes;
-
 export default inject(({ store }) => ({
   joinChannel: store.chat.joinChannel,
   createChannel: store.chat.createChannel,
+  generatedChannelId: store.chat.generatedChannelId,
+  generateChannelId: store.chat.generateChannelId,
 }))(observer(JoinChannel));

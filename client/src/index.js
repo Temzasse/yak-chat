@@ -8,10 +8,13 @@ import './index.css';
 
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import createSocket from './services/websocket';
-import store from './store';
+import { createSocket, initSocket } from './services/websocket';
+import createStore from './store';
 
-createSocket(store);
+const socket = createSocket();
+const store = createStore({ socket }); // Inject dependencies
+
+initSocket({ store }); // Attach event listeners and inject dependencies
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>

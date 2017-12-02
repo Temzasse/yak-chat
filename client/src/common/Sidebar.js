@@ -56,6 +56,11 @@ const ToggleButton = styled.div`
   & > svg {
     height: 20px;
     width: 20px;
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(1.2);
+    }
   }
 `;
 
@@ -90,7 +95,7 @@ const Backdrop = styled.div`
 `;
 
 const Items = styled.div`
-  padding: 12px 8px;
+  padding: 12px;
 
   ${media.tablet`
     padding: 24px 16px;

@@ -1,42 +1,55 @@
-import { types, getParent } from 'mobx-state-tree';
-import storage from 'store';
+import { types, getParent, getEnv } from 'mobx-state-tree';
+import storage from '../services/storage';
 import User from '../user/user.model';
 import Channel from '../channel/channel.model';
+import { alphabetically } from '../services/utils';
 
 const Chat = types
   .model({
     activeChannel: types.maybe(types.reference(Channel)),
     channels: types.optional(types.map(Channel), {}),
+    generatedChannelId: types.maybe(types.string),
   })
   .actions(self => ({
-    fetchActiveChannel() {
-      const activeChannel = storage.get('activeChannel');
+    fetchChannels() {
+      // Get persisted data
+      const activeChannel = storage.getActiveChannel();
+      const channels = storage.getChannels();
+      
       if (activeChannel) self.joinChannel(activeChannel);
+      
+      const { socket } = getEnv(self);
+
+      channels.forEach(channelId => {
+        const channel = Channel.create({ id: channelId });
+        self.channels.put(channel);
+
+        if (channelId !== activeChannel) {
+          // Also join other channels to receive messages etc.
+          socket.emit('JOIN_CHANNEL', channelId);
+        }
+      });
     },
 
-    // TODO: is there any difference between joinChannel and createChannel?
     joinChannel(channelId) {
       const channel = Channel.create({ id: channelId });
       self.channels.put(channel);
       self.activeChannel = channelId;
-      storage.set('activeChannel', channelId);
-      /**
-       * NOTE:
-       * Messages are fetched automatically with `onPatch` listener
-       * in /services/websocket.
-       */
+      storage.setActiveChannel(channelId);
+      
+      const { socket } = getEnv(self);
+      self.activeChannel.setLoading(true);
+      socket.emit('JOIN_CHANNEL', channelId);
     },
 
     createChannel(channelId) {
-      const channel = Channel.create({ id: channelId });
-      self.channels.put(channel);
+      storage.addChannel(channelId);
+      self.joinChannel(channelId);
+    },
+
+    setActiveChannel(channelId) {
       self.activeChannel = channelId;
-      storage.set('activeChannel', channelId);
-      /**
-       * NOTE:
-       * Messages are fetched automatically with `onPatch` listener
-       * in /services/websocket.
-       */
+      storage.setActiveChannel(channelId);
     },
 
     receiveMessage({ channelId, msg }) {
@@ -64,11 +77,30 @@ const Chat = types
       const u = User.create({ ...sender });
       const msg = { content, sender: u, timestamp, type };
       self.activeChannel.messages.push(msg);
+
+      const { socket } = getEnv(self);
+      socket.emit('SEND_CHAT_MESSAGE', {
+        msg,
+        channelId: self.activeChannel.id,
+      });
     },
+
+    updateGeneratedChannelId(channelId) {
+      self.generatedChannelId = channelId;
+    },
+
+    generateChannelId() {
+      const { socket } = getEnv(self);
+      socket.emit('GENERATE_CHANNEL_ID');
+    }
   }))
   .views(self => ({
     getMessages() {
       return self.activeChannel.messages;
+    },
+
+    getChannels() {
+      return self.channels.values().sort(alphabetically);
     }
   }));
 
