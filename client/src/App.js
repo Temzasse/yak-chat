@@ -77,5 +77,5 @@ export default inject(({ store }) => ({
   userFetched: store.userFetched,
   fetchUser: store.fetchUser,
   activeChannel: store.chat.activeChannel,
-  fetchChannels: store.chat.fetchChannels,
+  fetchChannels: store.chat.fetchChannels
 }))(AppView);

@@ -36,6 +36,7 @@ const Chat = types
       self.channels.put(channel);
       self.activeChannel = channelId;
       storage.setActiveChannel(channelId);
+      storage.addChannel(channelId);
 
       const { socket } = getEnv(self);
       self.activeChannel.setLoading(true);
@@ -43,7 +44,6 @@ const Chat = types
     },
 
     createChannel(channelId) {
-      storage.addChannel(channelId);
       self.joinChannel(channelId);
     },
 
