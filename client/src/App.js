@@ -21,7 +21,7 @@ if (process.env.NODE_ENV !== 'production') {
 class App extends Component {
   componentWillMount() {
     this.props.fetchUser();
-    this.props.fetchActiveChannel();
+    this.props.fetchChannels();
   }
 
   render() {
@@ -77,5 +77,5 @@ export default inject(({ store }) => ({
   userFetched: store.userFetched,
   fetchUser: store.fetchUser,
   activeChannel: store.chat.activeChannel,
-  fetchActiveChannel: store.chat.fetchActiveChannel,
+  fetchChannels: store.chat.fetchChannels,
 }))(AppView);
