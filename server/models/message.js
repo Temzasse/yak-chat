@@ -17,7 +17,7 @@ const MessageSchema = new mongoose.Schema({
 });
 
 // Enable expiration
-MessageSchema.index({ timestamp: 1 }, { expireAfterSeconds: config.MESSAGE_EXPIRY_TIME * 3600 });
+MessageSchema.index({ timestamp: 1 }, { expireAfterSeconds: config.MESSAGE_EXPIRY_TIME_HOURS * 3600 });
 
 const Message = mongoose.model('Message', MessageSchema);
 

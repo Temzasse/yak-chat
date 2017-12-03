@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import format from 'date-fns/format';
+import distanceInWords from 'date-fns/distance_in_words';
 import { observer, PropTypes as pt } from 'mobx-react';
 import throttle from 'lodash.throttle';
 
@@ -74,7 +74,7 @@ class MessageList extends Component {
         {messages.map(msg =>
           <MessageItem
             isOwn={msg.sender.id === user.id}
-            time={format(new Date(msg.timestamp), 'HH.mm')}
+            time={distanceInWords(new Date(), new Date(msg.timestamp), { addSuffix: true })}
             content={msg.content}
             nickname={msg.sender.nickname}
             key={`${msg.timestamp}-${msg.sender.id}`}
