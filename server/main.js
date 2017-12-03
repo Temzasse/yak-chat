@@ -71,6 +71,10 @@ app._io.on('connection', sock => {
         if (!foundChannel) {
           Channel.create({ name: channelId }, (err2, createdChannel) => {
             logger.info('Created channel ', err2, createdChannel);
+            sock.emit('CHAT_MESSAGE_HISTORY', {
+              channelId,
+              messages: createdChannel.messages
+            });
           });
         } else {
           sock.emit('CHAT_MESSAGE_HISTORY', {
