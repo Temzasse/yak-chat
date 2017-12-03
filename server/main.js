@@ -53,7 +53,6 @@ app._io.on('connection', sock => {
         { $push: { messages: createdMessage._id } },
         { upsert: true, new: true },
         (channelErr, updatedChannel) => {
-          console.log('message inserted ', channelErr, updatedChannel);
           // Send message to channel
           sock.to(channelId).emit('CHAT_MESSAGE', { channelId, msg });
         }

@@ -15,9 +15,9 @@ const Chat = types
       // Get persisted data
       const activeChannel = storage.getActiveChannel();
       const channels = storage.getChannels();
-      
+
       if (activeChannel) self.joinChannel(activeChannel);
-      
+
       const { socket } = getEnv(self);
 
       channels.forEach(channelId => {
@@ -36,7 +36,7 @@ const Chat = types
       self.channels.put(channel);
       self.activeChannel = channelId;
       storage.setActiveChannel(channelId);
-      
+
       const { socket } = getEnv(self);
       self.activeChannel.setLoading(true);
       socket.emit('JOIN_CHANNEL', channelId);
@@ -53,7 +53,7 @@ const Chat = types
     },
 
     receiveMessage({ channelId, msg }) {
-      const { content, sender, timestamp = '', type = 'message' } = msg;
+      const { content, sender, timestamp = new Date().toISOString(), type = 'message' } = msg;
       const u = User.create({ ...sender });
       const channel = self.channels.get(channelId);
       channel.messages.push({ content, sender: u, timestamp, type });
@@ -73,7 +73,7 @@ const Chat = types
       }
     },
 
-    addMessage({ content, sender, timestamp = '', type = 'message' }) {
+    addMessage({ content, sender, timestamp = new Date().toISOString(), type = 'message' }) {
       const u = User.create({ ...sender });
       const msg = { content, sender: u, timestamp, type };
       self.activeChannel.messages.push(msg);

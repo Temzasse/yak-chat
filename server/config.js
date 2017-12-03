@@ -22,6 +22,7 @@ config.DEBUG = mapBool(process.env.DEBUG);
 config.APP_NAME = 'yak-server';
 config.API_PORT = process.env.API_PORT;
 config.API_BINDADDR = process.env.API_BINDADDR;
+config.MESSAGE_EXPIRY_TIME_HOURS = 24;
 
 // Check requirements
 required.forEach(req => {
