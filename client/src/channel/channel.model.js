@@ -1,7 +1,11 @@
 import { types } from 'mobx-state-tree';
+import uuid from 'node-uuid';
 import User from '../user/user.model';
 
 const Message = types.model({
+  id: types.identifier(types.string, () => {
+    return uuid.v4();
+  }),
   content: '',
   type: types.optional(types.string, 'message'),
   timestamp: types.optional(types.string, () => {

@@ -5,6 +5,7 @@ const { ObjectId } = mongoose.Schema.Types;
 
 const MessageSchema = new mongoose.Schema({
   // channel: ObjectId,
+  id: String,
   content: String,
   sender: {
     nickname: String,

@@ -53,10 +53,11 @@ const Chat = types
     },
 
     receiveMessage({ channelId, msg }) {
-      const { content, sender, timestamp = new Date().toISOString(), type = 'message' } = msg;
+      const { id, content, sender, timestamp = new Date().toISOString(), type = 'message' } = msg;
       const u = User.create({ ...sender });
       const channel = self.channels.get(channelId);
-      channel.messages.push({ content, sender: u, timestamp, type });
+      channel.messages.push({ id, content, sender: u, timestamp, type });
+      storage.addMessage(channelId, msg);
 
       const { user } = getParent(self);
 
@@ -73,10 +74,11 @@ const Chat = types
       }
     },
 
-    addMessage({ content, sender, timestamp = new Date().toISOString(), type = 'message' }) {
+    addMessage({ id, content, sender, timestamp = new Date().toISOString(), type = 'message' }) {
       const u = User.create({ ...sender });
-      const msg = { content, sender: u, timestamp, type };
+      const msg = { id, content, sender: u, timestamp, type };
       self.activeChannel.messages.push(msg);
+      storage.addMessage(self.activeChannel.id, msg);
 
       const { socket } = getEnv(self);
       socket.emit('SEND_CHAT_MESSAGE', {
