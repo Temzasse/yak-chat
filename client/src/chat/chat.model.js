@@ -38,6 +38,11 @@ const Chat = types
       storage.setActiveChannel(channelId);
       storage.addChannel(channelId);
 
+      // This is dirty, but why this is not working without setTimeout?
+      setTimeout(() => {
+        self.loadLocalMessages(channelId);
+      });
+
       const { socket } = getEnv(self);
       self.activeChannel.setLoading(true);
       socket.emit('JOIN_CHANNEL', channelId);
@@ -51,14 +56,27 @@ const Chat = types
       self.activeChannel = channelId;
       storage.setActiveChannel(channelId);
     },
-
+    loadLocalMessages(channelId) {
+      const messages = storage.getMessages(channelId);
+      messages.forEach(msg => {
+        const { id, content, sender, timestamp = new Date().toISOString(), type = 'message' } = msg;
+        const u = User.create({ ...sender });
+        const mchannel = self.channels.get(channelId);
+        mchannel.messages.push({ id, content, sender: u, timestamp, type });
+      });
+    },
     receiveMessage({ channelId, msg }) {
       const { id, content, sender, timestamp = new Date().toISOString(), type = 'message' } = msg;
       const u = User.create({ ...sender });
       const channel = self.channels.get(channelId);
+
+      // If the message is already in channel.messages, do not add it
+      if (channel.messages.filter(m => m.id === msg.id).length > 0) {
+        return;
+      }
+
       channel.messages.push({ id, content, sender: u, timestamp, type });
       storage.addMessage(channelId, msg);
-
       const { user } = getParent(self);
 
       // Show "You have new messages" thingy if someone else than the current
