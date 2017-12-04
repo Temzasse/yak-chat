@@ -11,7 +11,7 @@ import UnseenMessages from './UnseenMessages';
 class MessageList extends Component {
   static propTypes = {
     messages: pt.observableArrayOf(PropTypes.shape({
-      timestamp: PropTypes.number.isRequired,
+      timestamp: PropTypes.string.isRequired,
       content: PropTypes.string.isRequired,
       type: PropTypes.oneOf(['message', 'file']).isRequired,
       sender: PropTypes.object.isRequired,
