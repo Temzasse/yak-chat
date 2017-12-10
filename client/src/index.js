@@ -14,6 +14,11 @@ import createStore from './store';
 const socket = createSocket();
 const store = createStore({ socket }); // Inject dependencies
 
+if (process.env.NODE_ENV !== 'production') {
+  const makeInspectable = require('mobx-devtools-mst').default; // eslint-disable-line
+  makeInspectable(store);
+}
+
 initSocket({ store }); // Attach event listeners and inject dependencies
 
 ReactDOM.render(

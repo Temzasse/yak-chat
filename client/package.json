@@ -27,6 +27,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "mobx-devtools-mst": "0.9.8",
     "mobx-react-devtools": "4.2.15"
   }
 }
