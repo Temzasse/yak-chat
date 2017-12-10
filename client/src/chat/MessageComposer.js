@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css, keyframes } from 'styled-components';
-import uuid from 'node-uuid';
 import SendIcon from 'react-icons/lib/md/send';
+import { guid } from '../services/utils';
 
 const propTypes = {
   addMessage: PropTypes.func.isRequired,
@@ -21,7 +21,7 @@ class MessageComposer extends Component {
     const { user } = this.props;
 
     if (message) {
-      this.props.addMessage({ id: uuid.v4(), content: message, sender: user });
+      this.props.addMessage({ id: guid(), content: message, sender: user });
       this.setState({ message: '' });
     }
   }
