@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css, keyframes } from 'styled-components';
+import uuid from 'node-uuid';
 import SendIcon from 'react-icons/lib/md/send';
 
 const propTypes = {
@@ -20,7 +21,7 @@ class MessageComposer extends Component {
     const { user } = this.props;
 
     if (message) {
-      this.props.addMessage({ content: message, sender: user });
+      this.props.addMessage({ id: uuid.v4(), content: message, sender: user });
       this.setState({ message: '' });
     }
   }
@@ -53,7 +54,7 @@ class MessageComposer extends Component {
         />
 
         <SendButton type='submit'>
-          <Icon readyToSend={!!message} />
+          <Icon readytosend={(!!message).toString()} />
         </SendButton>
       </Wrapper>
     );
@@ -101,7 +102,7 @@ const Icon = styled(SendIcon)`
   transition: fill 0.4s ease;
   fill: ${props => props.theme.greyLighter};
 
-  ${props => props.readyToSend && css`
+  ${props => props.readytosend && css`
     fill: ${props.theme.secondaryColor};
   `}
 `;

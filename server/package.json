@@ -34,7 +34,7 @@
     "koa-router": "^7.2.1",
     "koa-socket": "^4.4.0",
     "lodash": "^4.17.4",
-    "redis": "^2.8.0",
+    "mongoose": "^4.13.1",
     "winston": "3.0.0-rc0"
   }
 }

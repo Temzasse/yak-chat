@@ -26,9 +26,9 @@ services:
       DEBUG: 'true'
       API_BINDADDR: 0.0.0.0
       API_PORT: 3332
-  redis:
-    image: redis:3.0.7-alpine
-    environment:
-      - 'REDIS_PASS=**None**'
+  mongodb:
+    image: mongo:latest
     ports:
-      - "6379:6379"
+      - '27017:27017'
+    volumes:
+      - './db:/data/db'
