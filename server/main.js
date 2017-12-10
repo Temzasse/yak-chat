@@ -96,7 +96,10 @@ app._io.on('connection', sock => {
 
 // Logging handler: log errors only in prod
 app.on('error', (err, ctx) => {
-  logger.error({ err, req: ctx.req, res: ctx.res }, 'Caught unhandled exception.');
+  logger.error(
+    { err, req: ctx.req, res: ctx.res },
+    'Caught unhandled exception.'
+  );
 });
 
 // Start the server.

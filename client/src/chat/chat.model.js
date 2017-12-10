@@ -23,6 +23,7 @@ const Chat = types
       channels.forEach(channelId => {
         const channel = Channel.create({ id: channelId });
         self.channels.put(channel);
+        self.loadLocalMessages(channelId);
 
         if (channelId !== activeChannel) {
           // Also join other channels to receive messages etc.
@@ -38,11 +39,6 @@ const Chat = types
       storage.setActiveChannel(channelId);
       storage.addChannel(channelId);
 
-      // This is dirty, but why this is not working without setTimeout?
-      setTimeout(() => {
-        self.loadLocalMessages(channelId);
-      });
-
       const { socket } = getEnv(self);
       self.activeChannel.setLoading(true);
       socket.emit('JOIN_CHANNEL', channelId);
@@ -56,17 +52,35 @@ const Chat = types
       self.activeChannel = channelId;
       storage.setActiveChannel(channelId);
     },
+
     loadLocalMessages(channelId) {
       const messages = storage.getMessages(channelId);
+
       messages.forEach(msg => {
-        const { id, content, sender, timestamp = new Date().toISOString(), type = 'message' } = msg;
+        const {
+          id,
+          content,
+          sender,
+          timestamp = new Date().toISOString(),
+          type = 'message'
+        } = msg;
+
         const u = User.create({ ...sender });
         const mchannel = self.channels.get(channelId);
+
         mchannel.messages.push({ id, content, sender: u, timestamp, type });
       });
     },
+
     receiveMessage({ channelId, msg }) {
-      const { id, content, sender, timestamp = new Date().toISOString(), type = 'message' } = msg;
+      const {
+        id,
+        content,
+        sender,
+        timestamp = new Date().toISOString(),
+        type = 'message'
+      } = msg;
+
       const u = User.create({ ...sender });
       const channel = self.channels.get(channelId);
 
@@ -92,7 +106,15 @@ const Chat = types
       }
     },
 
-    addMessage({ id, content, sender, timestamp = new Date().toISOString(), type = 'message' }) {
+    addMessage(message) {
+      const {
+        id,
+        content,
+        sender,
+        timestamp = new Date().toISOString(),
+        type = 'message'
+      } = message;
+
       const u = User.create({ ...sender });
       const msg = { id, content, sender: u, timestamp, type };
       self.activeChannel.messages.push(msg);

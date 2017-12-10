@@ -23,8 +23,11 @@ const storage = {
 
   addChannel(channelId) {
     const channels = store.get('channels') || [];
-    channels.push(channelId);
-    store.set('channels', channels);
+
+    if (!channels.includes(channelId)) {
+      channels.push(channelId);
+      store.set('channels', channels);
+    }
   },
 
   removeChannel(channelId) {
