@@ -30,19 +30,35 @@ app.use(koaConvert(koaBetterBody({
 })));
 
 // Mongoose
-mongoose.connect('mongodb://mongodb/test');
+logger.info('> Connecting mongodb...');
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.info('> mongo url [mongodb://mongodb/yak]');
+  mongoose.connect('mongodb://mongodb/yak');
+} else {
+  /* eslint-disable max-len */
+
+  /* NOTE:
+   * Amazon's awsvcp networking allows us to use localhost interface
+   * http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
+   */
+
+  /* eslint-enable max-len */
+  logger.info('> mongo url [mongodb://127.0.0.1/yak]');
+  mongoose.connect('mongodb://127.0.0.1/yak');
+}
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
-  logger.info('Mongo connection open');
+  logger.info('> Mongo connection open');
 });
 
 // Attach app to chat io instance
 chat.attach(app);
 
 app._io.on('connection', sock => {
-  logger.info('socket connected!');
+  logger.info('> socket connected!');
 
   sock.on('SEND_CHAT_MESSAGE', ({ channelId, msg }) => {
     msg.name = channelId;
@@ -70,7 +86,7 @@ app._io.on('connection', sock => {
       .exec((err, foundChannel) => {
         if (!foundChannel) {
           Channel.create({ name: channelId }, (err2, createdChannel) => {
-            logger.info('Created channel ', err2, createdChannel);
+            logger.info('> Created channel ', err2, createdChannel);
             sock.emit('CHAT_MESSAGE_HISTORY', {
               channelId,
               messages: createdChannel.messages
@@ -104,7 +120,7 @@ app.on('error', (err, ctx) => {
 
 // Start the server.
 app.listen(config.API_PORT, config.API_BINDADDR, () => {
-  logger.info(`Server started at ${config.API_BINDADDR}:${config.API_PORT}`);
+  logger.info(`> Server started at ${config.API_BINDADDR}:${config.API_PORT}`);
 });
 
 export default app;

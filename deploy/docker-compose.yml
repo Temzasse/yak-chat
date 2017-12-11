@@ -1,0 +1,34 @@
+version: "2"
+
+services:
+  client:
+    image: 055392709130.dkr.ecr.us-east-1.amazonaws.com/yak-chat:client
+    ports:
+      - "80:80"
+
+  server:
+    image: 055392709130.dkr.ecr.us-east-1.amazonaws.com/yak-chat:server
+    ports:
+      - "3332:3332"
+    environment:
+      ENV: prod
+      DEBUG: 'false'
+      API_BINDADDR: localhost
+      API_PORT: 3332
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: yak-chat
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: server
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: yak-chat
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: mongodb

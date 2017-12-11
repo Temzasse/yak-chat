@@ -5,15 +5,19 @@
 */
 
 import io from 'socket.io-client';
-import config from '../config';
 
 let socket = null;
+let API_URL;
+
+if (process.env.NODE_ENV === 'production') {
+  // nginx will proxy it to server:3332
+  API_URL = `http://${window.location.host}`;
+} else {
+  API_URL = 'http://0.0.0.0:3332';
+}
 
 export const createSocket = () => {
-  socket = io(config.API_URL, {
-    reconnectionDelay: 2000,
-  });
-
+  socket = io(API_URL, { reconnectionDelay: 2000 });
   return socket;
 };
 

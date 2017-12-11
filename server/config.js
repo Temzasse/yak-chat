@@ -1,5 +1,3 @@
-import path from 'path';
-
 // Configs
 
 const required = [

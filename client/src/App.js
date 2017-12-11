@@ -57,7 +57,7 @@ class App extends Component {
           </div>
         </Router>
 
-        <DevTools />
+        {DevTools && <DevTools />}
       </AppWrapper>
     );
   }
