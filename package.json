@@ -9,7 +9,9 @@
     "clean:build": "docker-compose down; docker-compose up --build",
     "clean:install": "rm -rf node_modules; npm install",
     "reinstall:client": "docker exec -it yak-client npm install --quiet",
-    "reinstall:server": "docker exec -it yak-server npm install --quiet"
+    "reinstall:server": "docker exec -it yak-server npm install --quiet",
+    "build:server:image": "cd server && npm run build:image",
+    "build:client:image": "cd client && npm run build:image"
   },
   "repository": {
     "type": "git",
