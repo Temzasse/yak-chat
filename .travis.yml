@@ -1,0 +1,18 @@
+sudo: required
+services:
+- docker
+before_install:
+- pip install --user awscli
+- export PATH=$PATH:$HOME/.local/bin
+script:
+- eval $(aws ecr get-login --region eu-central-1)
+- npm run build:server:image
+- npm run build:client:image
+- docker tag yak-chat-server 055392709130.dkr.ecr.us-east-1.amazonaws.com/yak-chat:server
+- docker tag yak-chat-client 055392709130.dkr.ecr.us-east-1.amazonaws.com/yak-chat:client
+- docker push 055392709130.dkr.ecr.us-east-1.amazonaws.com/yak-chat:server
+- docker push 055392709130.dkr.ecr.us-east-1.amazonaws.com/yak-chat:client
+env:
+  global:
+  - secure: ShTxx54U/Kpi/5EfG0zf7gcn/q5GaL9x1fwJ2Iq+mW7lf04AG5qmzuGlgqAAeAO4cOY9z/m4oZv9NQCCnSXAN0ETBRg2e9fYAhsXxtDRvjwpZjMIgj1nBdWcwnYTtb/9d3AkrXFQxekjt19w8ZPcI94JK/yFKKWi2KXavRq0BxR4n/sOzJz1Pw759VFixvP7ZnL4nrka4hMPKciOao4M5SZLoQBX2oFnAnBsP4APdQzlPB8wYuMAVycTGcAH1dO+a3jr14Zu3Zx589FS5oTHO1gjWid4iOJe/q16y8pwCDtR4M25DZZe2v5nXWlnYF9OTZzsNdT/N5HV57zfkbev3K4SwWfM/tqH1nPRocH7CHXQjTDwJtpKo5SEesshLyVo7jUD+0FMpSx9IHDAu+RSejHCIf5ssQJeNWKWkDnXI6C6SmdULSG9grpV5bi3CjPCVUXOxWmVb6KTCAFWtIREB6/+UUXOf1aPCD6pvv/t9oWFrm35yn9okMTkQFXLRUksFnzQkQA/W5q8r2BNzJUgHrdQTdxS7TQ0MzGg8L0/V1lQperG2ifrzAFyQp2pDKL+o2+2VUGmQiR2FAsqwyquGVyQEcazYPrFkZlmKMS+aCAa9WYzwyGyZss6hY1nOjNXn8FmkWb8bRj9gX1roSVAe1gIWA4pr9xnk+gTGjQrgIw=
+  - secure: SmYy15rSXuuk766OGnG+ctNSXWLF0xxvSRvqV5yucUfiPwSU23lx8tP8axcUk4oECVsY+y193OWZlyQnZ4l0wwSEU5gLdLhYKjq55b4tRDXwyHpIEY3BHVamEyLle3p+5b51n/Zf0l074GPau95k8OyPx2H7KKkGsNDz4P3yNVqzwd+SHFb0b2FjbPQlfv1Q47dMfZlWksUm/ZrdXDnXpR9BWeHk5kPnj+vurRGQjBopLGH8X3wQR2+RzJSU1P+aL6oTb0f5WTeFvd3DY2gmQxxRzWNYV3PKw0QsgqPE4LxgB8aXsWNfFqlNPNcOLNoP/ykQh3gpn0mjTZQo6uQIxeB3FozrR4W22r8WzRCyyOZIh7x5WKsng3twFIOadNkIsjOMZvlWPRaqskjXeUONprI8AzDRo5/xwI0jWP51i5jrrpB8GA1ZrPDU6kMfk43aIsdA/xrctgcx4KLD0/q0T3oaEwr+NObNMq9mHSjb2NmU3t2MB98UM151YyDUCULXsHlcEBm0nS/6TejEPY77Yj0o6At5WPE8PR0rnX8o10PWfSfnv/BFF4YACCtEN7nrq2rA0IFOWPf9VqZtTtepMAlYVKi/qHLFghS3szUmQGEBzR8Ld19ScadKaJg3jNtLiC6LuzAiv/hNb0GXQ+PJ6LbFXzRJNyPiYNhUCoieV7w=
