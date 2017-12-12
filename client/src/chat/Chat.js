@@ -20,6 +20,7 @@ class Chat extends Component {
     match: PropTypes.object.isRequired,
     channels: PropTypes.array.isRequired,
     setActiveChannel: PropTypes.func.isRequired,
+    joinChannel: PropTypes.func.isRequired,
     activeChannel: PropTypes.object,
     user: PropTypes.object
   }
@@ -32,15 +33,23 @@ class Chat extends Component {
     this.setState(prev => ({ sidebarOpen: !prev.sidebarOpen }));
   }
 
+  componentDidUpdate(prevProps) {
+    console.log('updat!', prevProps);
+    const channelId = this.props.match.params.channelId;
+    if (!prevProps.user && this.props.user) {
+      console.log(' USER SET JOIN CHANNEL');
+      this.props.joinChannel(channelId);
+    }
+    if (!prevProps.activeChannel) {
+      console.log('JOIN CHANNEL!!');
+      this.props.joinChannel(channelId);
+    }
+  }
+
   render() {
     const { sidebarOpen } = this.state;
     const { match, activeChannel, channels, user } = this.props;
-
-    if (!activeChannel) {
-      return (
-        <Redirect to='/join-channel' />
-      );
-    }
+    console.log('do we have actchannel ', activeChannel);
 
     return (
       <Wrapper row>
@@ -57,7 +66,7 @@ class Chat extends Component {
             </BlockButton>
           </Link>
 
-          {channels.map(channel =>
+          {activeChannel && channels.map(channel =>
             <Link to={`/chat/${channel.id}`} key={channel.id}>
               <ChannelButton
                 active={channel.id === activeChannel.id}
@@ -82,7 +91,7 @@ class Chat extends Component {
 
         <Main column>
           <Navbar onMenuPress={this.toggleSidebarOpen} />
-          { user &&
+          { user && activeChannel &&
             <Route path={`${match.url}/:channelId`} component={ActiveChat} />
           }
         </Main>
@@ -151,5 +160,6 @@ export default inject(({ store: { chat, user } }) => ({
   activeChannel: chat.activeChannel,
   channels: chat.getChannels(),
   setActiveChannel: chat.setActiveChannel,
+  joinChannel: chat.joinChannel,
   user
 }))(observer(Chat));

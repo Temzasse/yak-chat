@@ -36,7 +36,7 @@ class App extends Component {
         <Router>
           <div>
             <Switch>
-              <Route path='/chat' component={Chat} />
+              <Route path='/chat/:channelId' component={Chat} />
               <Route path='/create-user' component={CreateUser} />
               <Route path='/join-channel' component={JoinChannel} />
 
@@ -48,9 +48,9 @@ class App extends Component {
               {/*<Redirect to='/create-user' />*/}
             {/*}*/}
 
-            {user && !activeChannel &&
-              <Redirect to='/join-channel' />
-            }
+            {/*{user && !activeChannel &&*/}
+              {/*<Redirect to='/join-channel' />*/}
+            {/*}*/}
 
             {user && activeChannel &&
               <Redirect to={`/chat/${activeChannel.id}`} />

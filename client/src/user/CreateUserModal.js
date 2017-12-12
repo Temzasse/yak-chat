@@ -48,11 +48,11 @@ class CreateUser extends Component {
     const { nickname, isValid } = this.state;
     const { user, userFetched } = this.props;
 
-    if (userFetched && user) {
-      return (
-        <Redirect to='/' />
-      );
-    }
+    // if (userFetched && user) {
+    //   return (
+    //     <Redirect to='/' />
+    //   );
+    // }
 
     return (
       <CreateUserWrapper onSubmit={this.handleSubmit}>
