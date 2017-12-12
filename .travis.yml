@@ -5,7 +5,7 @@ before_install:
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
 script:
-- eval $(aws ecr get-login --region eu-central-1)
+- eval $(aws ecr get-login --region us-east-1)
 - npm run build:server:image
 - npm run build:client:image
 - docker tag yak-chat-server 055392709130.dkr.ecr.us-east-1.amazonaws.com/yak-chat:server
