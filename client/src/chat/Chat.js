@@ -5,71 +5,63 @@ import { inject, observer } from 'mobx-react';
 import Layout from 'react-components-kit/dist/Layout';
 import Gutter from 'react-components-kit/dist/Gutter';
 import NewIcon from 'react-icons/lib/fa/plus';
-import { Link, Route, Redirect } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 import Modal from 'react-components-kit/dist/Modal';
-import Button from 'react-components-kit/dist/Button';
 
 import Sidebar from '../common/Sidebar';
 import Navbar from '../common/Navbar';
 import BlockButton from '../common/BlockButton';
 import ActiveChat from './ActiveChat';
-import CreateUserModal from '../user/CreateUserModal'
+import CreateUser from '../user/CreateUser';
+import JoinChannel from '../channel/JoinChannel';
 
 class Chat extends Component {
   static propTypes = {
     match: PropTypes.object.isRequired,
     channels: PropTypes.array.isRequired,
     setActiveChannel: PropTypes.func.isRequired,
-    joinChannel: PropTypes.func.isRequired,
     activeChannel: PropTypes.object,
     user: PropTypes.object
   }
 
   state = {
     sidebarOpen: false,
+    joinModalOpen: false,
   }
 
   toggleSidebarOpen = () => {
     this.setState(prev => ({ sidebarOpen: !prev.sidebarOpen }));
   }
 
-  componentDidUpdate(prevProps) {
-    console.log('updat!', prevProps);
-    const channelId = this.props.match.params.channelId;
-    if (!prevProps.user && this.props.user) {
-      console.log(' USER SET JOIN CHANNEL');
-      this.props.joinChannel(channelId);
-    }
-    if (!prevProps.activeChannel) {
-      console.log('JOIN CHANNEL!!');
-      this.props.joinChannel(channelId);
-    }
+  openJoinModal = () => {
+    this.setState({ joinModalOpen: true });
+  }
+
+  closeJoinModal = () => {
+    if (this.props.activeChannel) this.setState({ joinModalOpen: false });
   }
 
   render() {
-    const { sidebarOpen } = this.state;
+    const { sidebarOpen, joinModalOpen } = this.state;
     const { match, activeChannel, channels, user } = this.props;
-    console.log('do we have actchannel ', activeChannel);
 
     return (
       <Wrapper row>
         <Sidebar isOpen={sidebarOpen} toggleOpen={this.toggleSidebarOpen}>
-          <Link to='/join-channel'>
-            <BlockButton flat>
-              <NewIcon />
-              {sidebarOpen && [
-                <Gutter amount='8px' key='gutter' />,
-                <span style={{ minWidth: 100 }} key='new-channel'>
-                  New channel
-                </span>
-              ]}
-            </BlockButton>
-          </Link>
+          <BlockButton flat onClick={this.openJoinModal}>
+            <NewIcon />
+            {sidebarOpen && [
+              <Gutter amount='8px' key='gutter' />,
+              <span style={{ minWidth: 100 }} key='new-channel'>
+                New channel
+              </span>
+            ]}
+          </BlockButton>
 
-          {activeChannel && channels.map(channel =>
+          {channels.map(channel =>
             <Link to={`/chat/${channel.id}`} key={channel.id}>
               <ChannelButton
-                active={channel.id === activeChannel.id}
+                active={activeChannel && channel.id === activeChannel.id}
                 sidebarOpen={sidebarOpen}
                 onClick={() => this.props.setActiveChannel(channel.id)}
               >
@@ -81,7 +73,8 @@ class Chat extends Component {
                     {channel.id.substring(0, 3)}
                   </span>
                 }
-                {!sidebarOpen && channel.id === activeChannel.id &&
+                {!sidebarOpen && activeChannel &&
+                channel.id === activeChannel.id &&
                   <ChannelActiveIndicator />
                 }
               </ChannelButton>
@@ -91,17 +84,26 @@ class Chat extends Component {
 
         <Main column>
           <Navbar onMenuPress={this.toggleSidebarOpen} />
-          { user && activeChannel &&
-            <ActiveChat />
-          }
+          <Route path={`${match.url}/:channelId`} component={ActiveChat} />
         </Main>
-        <div>
-          <Modal
-            visible={!user}
-          >
-            <CreateUserModal />
-          </Modal>
-        </div>
+
+        <Modal visible={!user}>
+          <CreateUser />
+        </Modal>
+
+        {/* NOTE:
+          * We don't want to show JoinChannel modal if the user has any
+          * channels persisted.
+          *
+          * Only if there is no active channel and no channels we should
+          * force the modal to be visible.
+          */}
+        <Modal
+          visible={(!channels.length && !activeChannel) || joinModalOpen}
+          hide={this.closeJoinModal}
+        >
+          <JoinChannel onJoin={this.closeJoinModal} />
+        </Modal>
       </Wrapper>
     );
   }

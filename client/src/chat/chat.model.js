@@ -142,11 +142,15 @@ const Chat = types
   }))
   .views(self => ({
     getMessages() {
-      return self.activeChannel.messages;
+      return self.activeChannel
+        ? self.activeChannel.messages
+        : [];
     },
 
     getChannels() {
-      return self.channels.values().sort(alphabetically);
+      return self.channels
+        ? self.channels.values().sort(alphabetically)
+        : [];
     }
   }));
 

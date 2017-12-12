@@ -10,13 +10,13 @@ import Gutter from 'react-components-kit/dist/Gutter';
 import Button from 'react-components-kit/dist/Button';
 import Layout from 'react-components-kit/dist/Layout';
 import Divider from 'react-components-kit/dist/Divider';
-import media from 'react-components-kit/dist/media';
 
 import logo from '../assets/logo.svg';
 
 class JoinChannel extends Component {
   static propTypes = {
     joinChannel: PropTypes.func.isRequired,
+    onJoin: PropTypes.func.isRequired,
     createChannel: PropTypes.func.isRequired,
     generateChannelId: PropTypes.func.isRequired,
     generatedChannelId: PropTypes.string,
@@ -33,11 +33,13 @@ class JoinChannel extends Component {
   createChannel = () => {
     const { generatedChannelId } = this.props;
     this.props.createChannel(generatedChannelId);
+    this.props.onJoin();
   }
 
   joinChannel = () => {
     const { channelId } = this.state;
     if (channelId) this.props.joinChannel(channelId);
+    this.props.onJoin();
   }
 
   render() {
@@ -104,16 +106,6 @@ class JoinChannel extends Component {
 }
 
 const JoinChannelWrapper = styled.div`
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${props => props.theme.secondaryColorLightest};
-
-  ${media.tablet`
-    padding: 16px;
-  `}
 `;
 
 const Logo = styled.img`
@@ -124,8 +116,6 @@ const Logo = styled.img`
 
 const JoinChannelCard = styled(Layout)`
   width: 100%;
-  max-width: 500px;
-  min-height: 400px;
   box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
   border-radius: 8px;
   padding: 16px 24px;
