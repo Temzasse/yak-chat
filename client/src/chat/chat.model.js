@@ -1,8 +1,9 @@
-import { types, getParent, getEnv } from 'mobx-state-tree';
+import { types, getParent, getEnv, flow } from 'mobx-state-tree';
 import storage from '../services/storage';
 import User from '../user/user.model';
 import Channel from '../channel/channel.model';
 import { alphabetically } from '../services/utils';
+import { getNotificationToken } from '../services/notifications';
 
 const Chat = types
   .model({
@@ -32,17 +33,21 @@ const Chat = types
       });
     },
 
-    joinChannel(channelId) {
+    joinChannel: flow(function* joinChannel(channelId) {
       const channel = Channel.create({ id: channelId });
+
       self.channels.put(channel);
       self.activeChannel = channelId;
+      self.activeChannel.setLoading(true);
       storage.setActiveChannel(channelId);
       storage.addChannel(channelId);
 
       const { socket } = getEnv(self);
-      self.activeChannel.setLoading(true);
-      socket.emit('JOIN_CHANNEL', channelId);
-    },
+      const fcmToken = yield getNotificationToken();
+
+      console.debug('> Joining channel', channelId);
+      socket.emit('JOIN_CHANNEL', { channelId, fcmToken });
+    }),
 
     createChannel(channelId) {
       self.joinChannel(channelId);

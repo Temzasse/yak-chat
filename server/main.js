@@ -11,6 +11,7 @@ import Channel from './models/channel';
 
 import config from './config';
 import logger from './logger';
+import { notifyChannel, subscribeToChannel } from './notifications';
 // import routes from './routes';
 
 import generateChannelId from './generator/generate';
@@ -62,8 +63,20 @@ app._io.on('connection', sock => {
     });
   });
 
-  sock.on('JOIN_CHANNEL', channelId => {
+  sock.on('JOIN_CHANNEL', ({ channelId, fcmToken }) => {
     sock.join(channelId);
+
+    // Handle notifications
+    if (fcmToken) {
+      logger.info('> FCM token', fcmToken);
+      subscribeToChannel(channelId, fcmToken);
+      notifyChannel(channelId, {
+        notification: {
+          title: 'Teemu testaa',
+          body: 'Wubba lubba dub dub!',
+        }
+      });
+    }
 
     // This should be possible to do with findOneAndUpdate
     // but it didn't work for some reason
