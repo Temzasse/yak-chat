@@ -8,10 +8,7 @@ services:
       dockerfile: Dockerfile.demo
     restart: always
     ports:
-      - "80:80"
-    volumes:
-      - "../client:/app"
-      - "/app/node_modules"
+      - "3000:3000"
     links:
       - server:server
 
@@ -23,9 +20,6 @@ services:
     restart: always
     ports:
       - "3332:3332"
-    volumes:
-      - "../server:/app"
-      - "/app/node_modules"
     environment:
       ENV: prod
       DEBUG: 'false'
