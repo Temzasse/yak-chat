@@ -77,6 +77,7 @@ class MessageList extends Component {
             time={distanceInWords(new Date(), new Date(msg.timestamp), { addSuffix: true })}
             content={msg.content}
             nickname={msg.sender.nickname}
+            id={msg.sender.id}
             key={`${msg.timestamp}-${msg.sender.id}`}
           />
         )}
