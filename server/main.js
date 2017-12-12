@@ -30,25 +30,11 @@ app.use(koaConvert(koaBetterBody({
 })));
 
 // Mongoose
-logger.info('> Connecting mongodb...');
-
-if (process.env.NODE_ENV !== 'production') {
-  logger.info('> mongo url [mongodb://mongodb/yak]');
-  mongoose.connect('mongodb://mongodb/yak');
-} else {
-  /* eslint-disable max-len */
-
-  /* NOTE:
-   * Amazon's awsvcp networking allows us to use localhost interface
-   * http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
-   */
-
-  /* eslint-enable max-len */
-  logger.info('> mongo url [mongodb://127.0.0.1/yak]');
-  mongoose.connect('mongodb://127.0.0.1/yak');
-}
+logger.info(`> Connecting mongodb to ${config.MONGO_URL}...`);
+mongoose.connect(`mongodb://${config.MONGO_URL}`);
 
 const db = mongoose.connection;
+
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
   logger.info('> Mongo connection open');

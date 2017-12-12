@@ -10,11 +10,12 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { createSocket, initSocket } from './services/websocket';
 import createStore from './store';
+import config from './config';
 
 const socket = createSocket();
 const store = createStore({ socket }); // Inject dependencies
 
-if (process.env.NODE_ENV !== 'production') {
+if (config.IS_PROD) {
   const makeInspectable = require('mobx-devtools-mst').default; // eslint-disable-line
   makeInspectable(store);
 }

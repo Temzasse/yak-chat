@@ -11,10 +11,11 @@ import {
 import Chat from './chat/Chat';
 import CreateUser from './user/CreateUser';
 import JoinChannel from './channel/JoinChannel';
+import config from './config';
 
 let DevTools = null;
 
-if (process.env.NODE_ENV !== 'production') {
+if (config.IS_PROD) {
   DevTools = require('mobx-react-devtools').default; // eslint-disable-line
 }
 

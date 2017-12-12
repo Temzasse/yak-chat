@@ -6,6 +6,7 @@ const required = [
   'ENV',
   'DEBUG',
   'APP_NAME',
+  'MONGO_URL',
 ];
 
 const config = {};
@@ -21,6 +22,7 @@ config.APP_NAME = 'yak-server';
 config.API_PORT = process.env.API_PORT;
 config.API_BINDADDR = process.env.API_BINDADDR;
 config.MESSAGE_EXPIRY_TIME_HOURS = 24;
+config.MONGO_URL = process.env.MONGO_URL;
 
 // Check requirements
 required.forEach(req => {

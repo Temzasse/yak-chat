@@ -6,6 +6,8 @@
   "scripts": {
     "up": "docker-compose up",
     "down": "docker-compose down",
+    "demo": "docker-compose --file demo/docker-compose.yml up",
+    "demo:clean": "docker-compose down; docker-compose --file demo/docker-compose.yml up --build",
     "clean:build": "docker-compose down; docker-compose up --build",
     "clean:install": "rm -rf node_modules; npm install",
     "reinstall:client": "docker exec -it yak-client npm install --quiet",

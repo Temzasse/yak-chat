@@ -3,28 +3,33 @@ version: "2"
 services:
   client:
     container_name: yak-client
-    build: ./client
+    build:
+      context: ../client
+      dockerfile: Dockerfile.demo
     restart: always
     ports:
-      - "3000:3000"
+      - "80:80"
     volumes:
-      - "./client:/app"
+      - "../client:/app"
       - "/app/node_modules"
     links:
       - server:server
 
   server:
     container_name: yak-server
-    build: ./server
+    build:
+      context: ../server
+      dockerfile: Dockerfile.build
     restart: always
     ports:
       - "3332:3332"
     volumes:
-      - "./server:/app"
+      - "../server:/app"
       - "/app/node_modules"
     environment:
-      ENV: dev
-      DEBUG: 'true'
+      ENV: prod
+      DEBUG: 'false'
+      DEMO: 'true'
       API_BINDADDR: 0.0.0.0
       API_PORT: 3332
       MONGO_URL: mongodb/yak
@@ -34,4 +39,4 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - './db:/data/db'
+      - '../db:/data/db'
