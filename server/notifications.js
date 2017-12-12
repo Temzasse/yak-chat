@@ -11,30 +11,33 @@ admin.initializeApp({
 export const subscribeToChannel = (channelId, token) => {
   admin.messaging().subscribeToTopic(token, channelId)
     .then(response => {
-      logger('Successfully subscribed to topic:', response);
+      logger.info('Successfully subscribed to topic:', response);
     })
     .catch(error => {
-      logger('Error subscribing to topic:', error);
+      logger.info('Error subscribing to topic:', error);
     });
 };
 
 export const unsubscribeFromChannel = (channelId, token) => {
   admin.messaging().unsubscribeFromTopic(token, channelId)
     .then(response => {
-      logger('Successfully unsubscribed from topic:', response);
+      logger.info('Successfully unsubscribed from topic:', response);
     })
     .catch(error => {
-      logger('Error unsubscribing from topic:', error);
+      logger.info('Error unsubscribing from topic:', error);
     });
 };
 
-export const notifyChannel = (channelId, msg) => {
+export const notifyChannel = (channelId, { title, body }) => {
+  if (!title || !body) return; // bail out
+
+  const msg = { notification: { title, body } };
   admin.messaging().sendToTopic(channelId, msg)
     .then(response => {
-      logger('Successfully sent message:', response);
+      logger.info('Successfully sent message:', response);
     })
     .catch(error => {
-      logger('Error sending message:', error);
+      logger.info('Error sending message:', error);
     });
 };
 

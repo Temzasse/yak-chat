@@ -12,8 +12,13 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 export async function getNotificationToken() {
-  const token = await messaging.getToken();
-  return token;
+  try {
+    const token = await messaging.getToken();
+    return token;
+  } catch (e) {
+    console.log('Failed to get token...', e);
+  }
+  return null;
 }
 
 const initNotifications = () => {

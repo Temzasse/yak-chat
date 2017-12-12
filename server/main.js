@@ -61,22 +61,20 @@ app._io.on('connection', sock => {
         }
       );
     });
+
+    notifyChannel(channelId, {
+      title: msg.sender.nickname,
+      body: msg.content.length > 30
+        ? `${msg.content.substring(0, 30)}...`
+        : msg.content,
+    });
   });
 
   sock.on('JOIN_CHANNEL', ({ channelId, fcmToken }) => {
     sock.join(channelId);
 
     // Handle notifications
-    if (fcmToken) {
-      logger.info(`> FCM token ${fcmToken}`);
-      // subscribeToChannel(channelId, fcmToken);
-      // notifyChannel(channelId, {
-      //   notification: {
-      //     title: 'Teemu testaa',
-      //     body: 'Wubba lubba dub dub!',
-      //   }
-      // });
-    }
+    if (fcmToken) subscribeToChannel(channelId, fcmToken);
 
     // This should be possible to do with findOneAndUpdate
     // but it didn't work for some reason
