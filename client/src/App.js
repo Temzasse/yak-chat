@@ -44,9 +44,9 @@ class App extends Component {
               <Redirect to='/chat' />
             </Switch>
 
-            {!user &&
-              <Redirect to='/create-user' />
-            }
+            {/*{!user &&*/}
+              {/*<Redirect to='/create-user' />*/}
+            {/*}*/}
 
             {user && !activeChannel &&
               <Redirect to='/join-channel' />

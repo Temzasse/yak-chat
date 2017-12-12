@@ -6,11 +6,14 @@ import Layout from 'react-components-kit/dist/Layout';
 import Gutter from 'react-components-kit/dist/Gutter';
 import NewIcon from 'react-icons/lib/fa/plus';
 import { Link, Route, Redirect } from 'react-router-dom';
+import Modal from 'react-components-kit/dist/Modal';
+import Button from 'react-components-kit/dist/Button';
 
 import Sidebar from '../common/Sidebar';
 import Navbar from '../common/Navbar';
 import BlockButton from '../common/BlockButton';
 import ActiveChat from './ActiveChat';
+import CreateUserModal from '../user/CreateUserModal'
 
 class Chat extends Component {
   static propTypes = {
@@ -18,6 +21,7 @@ class Chat extends Component {
     channels: PropTypes.array.isRequired,
     setActiveChannel: PropTypes.func.isRequired,
     activeChannel: PropTypes.object,
+    user: PropTypes.object
   }
 
   state = {
@@ -30,7 +34,7 @@ class Chat extends Component {
 
   render() {
     const { sidebarOpen } = this.state;
-    const { match, activeChannel, channels } = this.props;
+    const { match, activeChannel, channels, user } = this.props;
 
     if (!activeChannel) {
       return (
@@ -78,8 +82,17 @@ class Chat extends Component {
 
         <Main column>
           <Navbar onMenuPress={this.toggleSidebarOpen} />
-          <Route path={`${match.url}/:channelId`} component={ActiveChat} />
+          { user &&
+            <Route path={`${match.url}/:channelId`} component={ActiveChat} />
+          }
         </Main>
+        <div>
+          <Modal
+            visible={!user}
+          >
+            <CreateUserModal />
+          </Modal>
+        </div>
       </Wrapper>
     );
   }
@@ -134,8 +147,9 @@ const ChannelActiveIndicator = styled.div`
   transform: translateY(-50%);
 `;
 
-export default inject(({ store: { chat } }) => ({
+export default inject(({ store: { chat, user } }) => ({
   activeChannel: chat.activeChannel,
   channels: chat.getChannels(),
   setActiveChannel: chat.setActiveChannel,
+  user
 }))(observer(Chat));
