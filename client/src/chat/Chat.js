@@ -44,6 +44,7 @@ class Chat extends Component {
   render() {
     const { sidebarOpen, joinModalOpen } = this.state;
     const { match, activeChannel, channels, user } = this.props;
+    const noChannels = channels.length === 0;
 
     return (
       <Wrapper row>
@@ -97,13 +98,17 @@ class Chat extends Component {
           *
           * Only if there is no active channel and no channels we should
           * force the modal to be visible.
+          *
+          * And don't show modal if user has not been created yet!
           */}
-        <Modal
-          visible={(!channels.length && !activeChannel) || joinModalOpen}
-          hide={this.closeJoinModal}
-        >
-          <JoinChannel onJoin={this.closeJoinModal} />
-        </Modal>
+        {user &&
+          <Modal
+            visible={(noChannels && !activeChannel) || joinModalOpen}
+            hide={this.closeJoinModal}
+          >
+            <JoinChannel onJoin={this.closeJoinModal} />
+          </Modal>
+        }
       </Wrapper>
     );
   }
