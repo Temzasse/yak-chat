@@ -45,7 +45,6 @@ const Chat = types
       const { socket } = getEnv(self);
       const fcmToken = yield getNotificationToken();
 
-      console.debug('> Joining channel', channelId);
       socket.emit('JOIN_CHANNEL', { channelId, fcmToken });
     }),
 

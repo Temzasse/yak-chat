@@ -68,14 +68,14 @@ app._io.on('connection', sock => {
 
     // Handle notifications
     if (fcmToken) {
-      logger.info('> FCM token', fcmToken);
-      subscribeToChannel(channelId, fcmToken);
-      notifyChannel(channelId, {
-        notification: {
-          title: 'Teemu testaa',
-          body: 'Wubba lubba dub dub!',
-        }
-      });
+      logger.info(`> FCM token ${fcmToken}`);
+      // subscribeToChannel(channelId, fcmToken);
+      // notifyChannel(channelId, {
+      //   notification: {
+      //     title: 'Teemu testaa',
+      //     body: 'Wubba lubba dub dub!',
+      //   }
+      // });
     }
 
     // This should be possible to do with findOneAndUpdate
