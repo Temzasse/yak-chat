@@ -31,7 +31,6 @@ export const initSocket = ({ store }) => {
   socket.on('CHAT_MESSAGE_HISTORY', ({ channelId, messages }) => {
     console.debug('[CHAT_MESSAGE_HISTORY]', channelId, messages);
     messages.forEach(msg => store.chat.receiveMessage({ channelId, msg }));
-    // store.chat.activeChannel.setLoading(false);
   });
 
   socket.on('GENERATED_CHANNEL_ID', channelId => {

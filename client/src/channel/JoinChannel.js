@@ -10,7 +10,6 @@ import Gutter from 'react-components-kit/dist/Gutter';
 import Button from 'react-components-kit/dist/Button';
 import Layout from 'react-components-kit/dist/Layout';
 import Divider from 'react-components-kit/dist/Divider';
-
 import logo from '../assets/logo.svg';
 
 class JoinChannel extends Component {
@@ -33,12 +32,16 @@ class JoinChannel extends Component {
   createChannel = () => {
     const { generatedChannelId } = this.props;
     this.props.createChannel(generatedChannelId);
+
+    // Call on join hook
     this.props.onJoin();
   }
 
   joinChannel = () => {
     const { channelId } = this.state;
     if (channelId) this.props.joinChannel(channelId);
+
+    // Call on join hook
     this.props.onJoin();
   }
 

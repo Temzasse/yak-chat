@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
-import { Redirect } from 'react-router-dom';
 
 import Heading from 'react-components-kit/dist/Heading';
 import Text from 'react-components-kit/dist/Text';
@@ -10,13 +9,9 @@ import TextField from 'react-components-kit/dist/TextField';
 import Gutter from 'react-components-kit/dist/Gutter';
 import Button from 'react-components-kit/dist/Button';
 import Layout from 'react-components-kit/dist/Layout';
-import media from 'react-components-kit/dist/media';
-
 import logo from '../assets/logo.svg';
 
 const propTypes = {
-  user: PropTypes.object,
-  userFetched: PropTypes.bool.isRequired,
   setUser: PropTypes.func.isRequired,
 };
 
