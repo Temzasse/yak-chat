@@ -17,8 +17,6 @@ const Chat = types
       const activeChannel = storage.getActiveChannel();
       const channels = storage.getChannels();
 
-      if (activeChannel) self.joinChannel(activeChannel);
-
       const { socket } = getEnv(self);
 
       channels.forEach(channelId => {
@@ -31,6 +29,8 @@ const Chat = types
           socket.emit('JOIN_CHANNEL', channelId);
         }
       });
+
+      if (activeChannel) self.joinChannel(activeChannel);
     },
 
     joinChannel: flow(function* joinChannel(channelId) {
@@ -99,7 +99,7 @@ const Chat = types
 
       // Show "You have new messages" thingy if someone else than the current
       // user added a new message.
-      if (channel === self.activeChannel) {
+      if (user && channel === self.activeChannel) {
         if (!self.activeChannel.followingMessages && sender.id !== user.id) {
           channel.unseenMessages = true;
         }

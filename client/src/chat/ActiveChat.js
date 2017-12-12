@@ -43,7 +43,7 @@ class ActiveChat extends Component {
         <ChatHeader />
         <MessageList
           messages={messages}
-          user={user}
+          user={user || {}}
           unseenMessages={unseenMessages}
           followingMessages={followingMessages}
           followMessages={followMessages}
@@ -65,14 +65,6 @@ const Wrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-`;
-
-const Loader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  height: 100%;
 `;
 
 ActiveChat.propTypes = propTypes;

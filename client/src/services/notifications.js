@@ -1,5 +1,10 @@
 import * as firebase from 'firebase';
 
+/* NOTE!!!
+ * Web Push Notifications DO NOT WORK on iOS at the moment...
+ */
+const notificationsUnsupported = !('Notification' in window);
+
 firebase.initializeApp({
   apiKey: 'AIzaSyCBI49-UdKW6iyayFhOnGnq4gBthx-2xe8',
   authDomain: 'yak-chat-779ce.firebaseapp.com',
@@ -12,16 +17,21 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 export async function getNotificationToken() {
+  if (notificationsUnsupported) return null; // iOS...
+
   try {
     const token = await messaging.getToken();
     return token;
   } catch (e) {
     console.log('Failed to get token...', e);
   }
+
   return null;
 }
 
 const initNotifications = () => {
+  if (notificationsUnsupported) return; // iOS...
+
   messaging.requestPermission()
     .then(() => {
       console.log('> Notification permission granted.');

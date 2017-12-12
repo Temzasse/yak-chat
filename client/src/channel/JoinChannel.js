@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
+import { withRouter } from 'react-router-dom';
 
 import Heading from 'react-components-kit/dist/Heading';
 import Text from 'react-components-kit/dist/Text';
@@ -19,6 +20,7 @@ class JoinChannel extends Component {
     createChannel: PropTypes.func.isRequired,
     generateChannelId: PropTypes.func.isRequired,
     generatedChannelId: PropTypes.string,
+    history: PropTypes.object.isRequired,
   }
 
   state = {
@@ -31,15 +33,21 @@ class JoinChannel extends Component {
 
   createChannel = () => {
     const { generatedChannelId } = this.props;
+    
     this.props.createChannel(generatedChannelId);
-
+    // Go to channel
+    this.props.history.push(`/chat/${generatedChannelId}`);
     // Call on join hook
     this.props.onJoin();
   }
 
   joinChannel = () => {
     const { channelId } = this.state;
-    if (channelId) this.props.joinChannel(channelId);
+    if (channelId) {
+      this.props.joinChannel(channelId);
+      // Go to channel
+      this.props.history.push(`/chat/${channelId}`);
+    }
 
     // Call on join hook
     this.props.onJoin();
@@ -139,4 +147,4 @@ export default inject(({ store }) => ({
   createChannel: store.chat.createChannel,
   generatedChannelId: store.chat.generatedChannelId,
   generateChannelId: store.chat.generateChannelId,
-}))(observer(JoinChannel));
+}))(withRouter(observer(JoinChannel)));
