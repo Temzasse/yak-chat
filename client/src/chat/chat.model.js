@@ -38,7 +38,7 @@ const Chat = types
 
       self.channels.put(channel);
       self.activeChannel = channelId;
-      self.activeChannel.setLoading(true);
+      // self.activeChannel.setLoading(true);
       storage.setActiveChannel(channelId);
       storage.addChannel(channelId);
 

@@ -92,7 +92,7 @@ class Chat extends Component {
         <Main column>
           <Navbar onMenuPress={this.toggleSidebarOpen} />
           { user && activeChannel &&
-            <Route path={`${match.url}/:channelId`} component={ActiveChat} />
+            <ActiveChat />
           }
         </Main>
         <div>
