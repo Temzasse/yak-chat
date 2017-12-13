@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
 import NavIcon from 'react-icons/lib/fa/align-left';
+import ShareIcon from 'react-icons/lib/fa/share-square-o';
 import media from 'react-components-kit/dist/media';
 import Gutter from 'react-components-kit/dist/Gutter';
 import Text from 'react-components-kit/dist/Text';
@@ -12,15 +13,19 @@ const propTypes = {
   activeChannel: PropTypes.shape({
     id: PropTypes.string.isRequired,
   }).isRequired,
+  onSharePress: PropTypes.func.isRequired,
 };
 
-const Navbar = ({ onMenuPress, activeChannel }) => (
+const Navbar = ({ onMenuPress, activeChannel, onSharePress }) => (
   <NavbarWrapper>
     <NavIcon onClick={onMenuPress} />
     <Gutter />
     <Text bold>
       {activeChannel ? activeChannel.id : ''}
     </Text>
+    <Gutter />
+    <ShareIcon onClick={onSharePress} />
+
   </NavbarWrapper>
 );
 
