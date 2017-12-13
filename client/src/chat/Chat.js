@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react';
 import Layout from 'react-components-kit/dist/Layout';
 import Gutter from 'react-components-kit/dist/Gutter';
 import NewIcon from 'react-icons/lib/fa/plus';
-import { Link, Route } from 'react-router-dom';
+import { Link, Route, withRouter } from 'react-router-dom';
 import Modal from 'react-components-kit/dist/Modal';
 
 import Sidebar from '../common/Sidebar';
@@ -27,6 +27,15 @@ class Chat extends Component {
   state = {
     sidebarOpen: false,
     joinModalOpen: false,
+  }
+
+  componentWillMount() {
+    // Automatically go to current active channel
+    const { activeChannel } = this.props;
+
+    if (activeChannel) {
+      this.props.history.push(`/chat/${activeChannel.id}`);
+    }
   }
 
   toggleSidebarOpen = () => {
@@ -169,4 +178,4 @@ export default inject(({ store: { chat, user } }) => ({
   setActiveChannel: chat.setActiveChannel,
   joinChannel: chat.joinChannel,
   user
-}))(observer(Chat));
+}))(withRouter(observer(Chat)));
