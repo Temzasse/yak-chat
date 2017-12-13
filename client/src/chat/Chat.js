@@ -9,7 +9,7 @@ import NewIcon from 'react-icons/lib/fa/plus';
 import { Link, Route, withRouter } from 'react-router-dom';
 import Modal from 'react-components-kit/dist/Modal';
 import Button from 'react-components-kit/dist/Button';
-import QRCode from 'qrcode.react';
+import QRCode from 'qrcode.react'; // eslint-disable-line
 
 import Sidebar from '../common/Sidebar';
 import Navbar from '../common/Navbar';
@@ -33,14 +33,15 @@ class Chat extends Component {
     showShareModal: false,
   }
 
-  componentWillMount() {
-    // Automatically go to current active channel
-    const { activeChannel } = this.props;
+  // NOTE: this does not work as intended...
+  // componentWillMount() {
+  //   // Automatically go to current active channel
+  //   const { activeChannel } = this.props;
 
-    if (activeChannel) {
-      this.props.history.push(`/chat/${activeChannel.id}`);
-    }
-  }
+  //   if (activeChannel) {
+  //     this.props.history.push(`/chat/${activeChannel.id}`);
+  //   }
+  // }
 
   toggleSidebarOpen = () => {
     this.setState(prev => ({ sidebarOpen: !prev.sidebarOpen }));

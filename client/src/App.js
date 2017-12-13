@@ -13,7 +13,7 @@ import config from './config';
 
 let DevTools = null;
 
-if (config.IS_PROD) {
+if (!config.IS_PROD) {
   DevTools = require('mobx-react-devtools').default; // eslint-disable-line
 }
 

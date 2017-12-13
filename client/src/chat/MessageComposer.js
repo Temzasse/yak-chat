@@ -54,7 +54,7 @@ class MessageComposer extends Component {
         />
 
         <SendButton type='submit'>
-          <Icon readytosend={(!!message).toString()} />
+          <Icon readyToSend={message && message.length > 0} />
         </SendButton>
       </Wrapper>
     );
@@ -102,16 +102,17 @@ const Icon = styled(SendIcon)`
   transition: fill 0.4s ease;
   fill: ${props => props.theme.greyLighter};
 
-  ${props => props.readytosend && css`
+  ${props => props.readyToSend && css`
     fill: ${props.theme.secondaryColor};
   `}
 `;
 
 const Blinker = styled.div`
   height: 24px;
-  width: 2px;
+  width: 4px;
   background-color: ${props => props.theme.secondaryColor};
   opacity: 0;
+  border-radius: 2px;
 
   ${props => props.blink && css`
     animation: ${blink} infinite 2s forwards;
