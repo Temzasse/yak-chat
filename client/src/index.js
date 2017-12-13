@@ -18,7 +18,7 @@ const store = createStore({ socket }); // Inject dependencies
 
 initNotifications();
 
-if (config.IS_PROD) {
+if (!config.IS_PROD) {
   const makeInspectable = require('mobx-devtools-mst').default; // eslint-disable-line
   makeInspectable(store);
 }

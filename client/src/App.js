@@ -9,8 +9,6 @@ import {
 } from 'react-router-dom';
 
 import Chat from './chat/Chat';
-import CreateUser from './user/CreateUser';
-import JoinChannel from './channel/JoinChannel';
 import config from './config';
 
 let DevTools = null;
@@ -26,7 +24,7 @@ class App extends Component {
   }
 
   render() {
-    const { user, userFetched, activeChannel } = this.props;
+    const { userFetched } = this.props;
 
     // Wait until the user has been fetched
     if (!userFetched) return null;
@@ -36,25 +34,10 @@ class App extends Component {
         <Router>
           <div>
             <Switch>
-              <Route path='/chat/:channelId' component={Chat} />
-              <Route path='/create-user' component={CreateUser} />
-              <Route path='/join-channel' component={JoinChannel} />
-
+              <Route path='/chat' component={Chat} />
               {/* If we dont hit any above paths redirect to chat */}
               <Redirect to='/chat' />
             </Switch>
-
-            {/*{!user &&*/}
-              {/*<Redirect to='/create-user' />*/}
-            {/*}*/}
-
-            {/*{user && !activeChannel &&*/}
-              {/*<Redirect to='/join-channel' />*/}
-            {/*}*/}
-
-            {user && activeChannel &&
-              <Redirect to={`/chat/${activeChannel.id}`} />
-            }
           </div>
         </Router>
 

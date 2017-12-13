@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import { getAvatarGradient } from '../services/utils';
 
 const propTypes = {
   content: PropTypes.string.isRequired,
@@ -8,11 +9,11 @@ const propTypes = {
   isOwn: PropTypes.bool.isRequired,
 };
 
-const MessageItem = ({ content, time, nickname, isOwn }) => (
+const MessageItem = ({ content, time, nickname, id, isOwn }) => (
   <Wrapper isOwn={isOwn}>
     <Message>
       {!isOwn &&
-        <Avatar>
+        <Avatar bg={getAvatarGradient(id)}>
           {nickname.substring(0, 2)}
         </Avatar>
       }
@@ -77,11 +78,12 @@ const Nickname = styled.div`
   color: #888;
 `;
 
+// background-color: ${props => props.theme.secondaryColorLight};
 const Avatar = styled.div`
   border-radius: 50%;
   height: 32px;
   width: 32px;
-  background-color: ${props => props.theme.secondaryColorLight};
+  background: ${props => props.bg};
   color: #fff;
   display: flex;
   align-items: center;
