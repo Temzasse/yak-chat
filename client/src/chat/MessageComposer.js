@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css, keyframes } from 'styled-components';
 import SendIcon from 'react-icons/lib/md/send';
+import media from 'react-components-kit/dist/media';
 import { guid } from '../services/utils';
 
 const propTypes = {
@@ -74,10 +75,13 @@ const Wrapper = styled.form`
   padding: 0px 16px;
   display: flex;
   align-items: center;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
   background-color: white;
+
+  ${media.tablet`
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  `}
 `;
 
 const Input = styled.input`

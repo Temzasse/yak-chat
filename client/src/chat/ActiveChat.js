@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import media from 'react-components-kit/dist/media';
 import { inject, observer, PropTypes as pt } from 'mobx-react';
 
 import MessageComposer from './MessageComposer';
@@ -70,7 +71,10 @@ const Wrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-bottom: 60px;
+
+  ${media.tablet`
+    margin-bottom: 60px;
+  `}
 `;
 
 export default inject(({ store: { chat, user } }) => ({
