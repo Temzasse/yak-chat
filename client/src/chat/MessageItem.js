@@ -52,6 +52,10 @@ const Wrapper = styled.div`
   display: flex;
   margin-bottom: 16px;
 
+  ${Bubble} {
+    align-self: flex-start;
+  }
+
   ${props => props.isOwn && css`
     justify-content: flex-end;
 
@@ -62,6 +66,7 @@ const Wrapper = styled.div`
     ${Bubble} {
       color: #fff;
       background-color: ${props.theme.primaryColorLight};
+      align-self: flex-end;
     }
   `}
 `;

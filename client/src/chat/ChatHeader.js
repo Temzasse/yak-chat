@@ -6,6 +6,7 @@ import media from 'react-components-kit/dist/media';
 import Text from 'react-components-kit/dist/Text';
 import Gutter from 'react-components-kit/dist/Gutter';
 import ShareIcon from 'react-icons/lib/fa/share-square-o';
+import ChannelUserCount from '../channel/ChannelUserCount';
 
 const propTypes = {
   activeChannel: PropTypes.shape({
@@ -20,6 +21,9 @@ const ChatHeader = ({ activeChannel, onSharePress }) => (
       {activeChannel ? activeChannel.id : ''}
     </Text>
     <Gutter />
+    <ChannelUserCount count={activeChannel ? activeChannel.userCount : 0} />
+    <Gutter />
+    <Flex />
     <ShareIcon onClick={onSharePress} />
   </ChatHeaderWrapper>
 );
@@ -35,6 +39,10 @@ const ChatHeaderWrapper = styled.div`
   ${media.tablet`
     display: none;
   `}
+`;
+
+const Flex = styled.div`
+  flex: 1;
 `;
 
 ChatHeader.propTypes = propTypes;

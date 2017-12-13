@@ -71,6 +71,8 @@ app._io.on('connection', sock => {
   });
 
   sock.on('JOIN_CHANNEL', ({ channelId, fcmToken }) => {
+    if (!channelId) return;
+
     sock.join(channelId);
 
     // Handle notifications
@@ -100,6 +102,13 @@ app._io.on('connection', sock => {
 
   sock.on('LEAVE_CHANNEL', channelId => {
     sock.leave(channelId);
+  });
+
+  sock.on('GET_CHANNEL_USER_COUNT', channelId => {
+    logger.info(`GET_CHANNEL_USER_COUNT: ${channelId}`);
+    const roomData = sock.adapter.rooms[channelId];
+    const count = roomData ? roomData.length : 0;
+    sock.emit('CHANNEL_USER_COUNT', { channelId, count });
   });
 
   sock.on('GENERATE_CHANNEL_ID', () => {

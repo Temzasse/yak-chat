@@ -17,36 +17,31 @@ const Chat = types
       const activeChannel = storage.getActiveChannel();
       const channels = storage.getChannels();
 
-      const { socket } = getEnv(self);
-
       channels.forEach(channelId => {
         const channel = Channel.create({ id: channelId });
         self.channels.put(channel);
         self.loadLocalMessages(channelId);
-
-        if (channelId !== activeChannel) {
-          // Also join other channels to receive messages etc.
-          socket.emit('JOIN_CHANNEL', channelId);
-        }
       });
 
       if (activeChannel) self.joinChannel(activeChannel);
     },
 
-    joinChannel: flow(function* joinChannel(channelId) {
+    notifyChannelJoin: flow(function* notifyChannelJoin(channelId) {
+      const { socket } = getEnv(self);
+      const fcmToken = yield getNotificationToken();
+      socket.emit('JOIN_CHANNEL', { channelId, fcmToken });
+    }),
+
+    joinChannel(channelId) {
       const channel = Channel.create({ id: channelId });
 
       self.channels.put(channel);
       self.activeChannel = channelId;
-      // self.activeChannel.setLoading(true);
+      self.notifyChannelJoin(channelId);
+
       storage.setActiveChannel(channelId);
       storage.addChannel(channelId);
-
-      const { socket } = getEnv(self);
-      const fcmToken = yield getNotificationToken();
-
-      socket.emit('JOIN_CHANNEL', { channelId, fcmToken });
-    }),
+    },
 
     createChannel(channelId) {
       self.joinChannel(channelId);
@@ -54,6 +49,7 @@ const Chat = types
 
     setActiveChannel(channelId) {
       self.activeChannel = channelId;
+      self.notifyChannelJoin(channelId);
       storage.setActiveChannel(channelId);
     },
 
@@ -138,6 +134,11 @@ const Chat = types
     generateChannelId() {
       const { socket } = getEnv(self);
       socket.emit('GENERATE_CHANNEL_ID');
+    },
+
+    updateChannelUserCount({ channelId, count }) {
+      const channel = self.channels.get(channelId);
+      if (channel) channel.updateUserCount(count);
     }
   }))
   .views(self => ({

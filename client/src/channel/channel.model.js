@@ -18,7 +18,8 @@ const Channel = types
     loadingMessages: false,
     unseenMessages: false,
     followingMessages: false,
-    messages: types.optional(types.array(Message), [])
+    messages: types.optional(types.array(Message), []),
+    userCount: types.optional(types.number, 0),
   })
   .actions(self => ({
     followMessages() {
@@ -32,6 +33,10 @@ const Channel = types
 
     setLoading(status) {
       self.loadingMessages = status;
+    },
+
+    updateUserCount(newCount) {
+      self.userCount = newCount;
     }
   }));
 

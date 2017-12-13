@@ -7,6 +7,7 @@ import ShareIcon from 'react-icons/lib/fa/share-square-o';
 import media from 'react-components-kit/dist/media';
 import Gutter from 'react-components-kit/dist/Gutter';
 import Text from 'react-components-kit/dist/Text';
+import ChannelUserCount from '../channel/ChannelUserCount';
 
 const propTypes = {
   onMenuPress: PropTypes.func.isRequired,
@@ -24,8 +25,10 @@ const Navbar = ({ onMenuPress, activeChannel, onSharePress }) => (
       {activeChannel ? activeChannel.id : ''}
     </Text>
     <Gutter />
+    <ChannelUserCount count={activeChannel ? activeChannel.userCount : 0} />
+    <Gutter />
+    <Flex />
     <ShareIcon onClick={onSharePress} />
-
   </NavbarWrapper>
 );
 
@@ -40,6 +43,10 @@ const NavbarWrapper = styled.div`
   ${media.tablet`
     display: flex;
   `}
+`;
+
+const Flex = styled.div`
+  flex: 1;
 `;
 
 Navbar.propTypes = propTypes;
