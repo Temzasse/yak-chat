@@ -27,10 +27,15 @@ class Chat extends Component {
 
   state = {
     sidebarOpen: false,
+    showShareModal: false,
   }
 
   toggleSidebarOpen = () => {
     this.setState(prev => ({ sidebarOpen: !prev.sidebarOpen }));
+  }
+
+  toggleShareModal = () => {
+    this.setState(prev => ({ showShareModal: !prev.showShareModal }));
   }
 
   componentDidUpdate(prevProps) {
@@ -90,7 +95,7 @@ class Chat extends Component {
         </Sidebar>
 
         <Main column>
-          <Navbar onMenuPress={this.toggleSidebarOpen} />
+          <Navbar onMenuPress={this.toggleSidebarOpen} onSharePress={this.toggleShareModal} />
           { user && activeChannel &&
             <ActiveChat />
           }

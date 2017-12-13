@@ -6,21 +6,26 @@ import NavIcon from 'react-icons/lib/fa/align-left';
 import media from 'react-components-kit/dist/media';
 import Gutter from 'react-components-kit/dist/Gutter';
 import Text from 'react-components-kit/dist/Text';
+import Button from 'reac-components-kit/dist/Button';
 
 const propTypes = {
   onMenuPress: PropTypes.func.isRequired,
+  onSharePress: PropTypes.func.isRequired,
   activeChannel: PropTypes.shape({
     id: PropTypes.string.isRequired,
   }).isRequired,
 };
 
-const Navbar = ({ onMenuPress, activeChannel }) => (
+const Navbar = ({ onMenuPress, activeChannel, onSharePress }) => (
   <NavbarWrapper>
     <NavIcon onClick={onMenuPress} />
     <Gutter />
     <Text bold>
       {activeChannel ? activeChannel.id : ''}
     </Text>
+    <Button onClick={onSharePress}>
+      Share
+    </Button>
   </NavbarWrapper>
 );
 
