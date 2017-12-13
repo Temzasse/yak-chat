@@ -25,6 +25,7 @@ class JoinChannel extends Component {
 
   state = {
     channelId: '',
+    isValid: false,
   }
 
   componentWillMount() {
@@ -33,7 +34,7 @@ class JoinChannel extends Component {
 
   createChannel = () => {
     const { generatedChannelId } = this.props;
-    
+
     this.props.createChannel(generatedChannelId);
     // Go to channel
     this.props.history.push(`/chat/${generatedChannelId}`);
@@ -53,8 +54,25 @@ class JoinChannel extends Component {
     this.props.onJoin();
   }
 
+  validate = val => {
+    if (!val) return false;
+    if (val.length < 3) return false;
+    if (/^[a-z-]+$/.test(val) && val.replace(/-/g, '').length >= 3) return true;
+    return false;
+  }
+
+  handleChange = ({ target }) => {
+    this.setState({ channelId: target.value });
+
+    if (this.validate(target.value)) {
+      this.setState({ isValid: true });
+    } else {
+      this.setState({ isValid: false });
+    }
+  }
+
   render() {
-    const { channelId } = this.state;
+    const { channelId, isValid } = this.state;
     const { generatedChannelId } = this.props;
 
     return (
@@ -69,9 +87,11 @@ class JoinChannel extends Component {
           <TextField
             name='channelId'
             label='What is your channel name?'
-            onChange={({ target }) => this.setState({ channelId: target.value })}
+            onChange={this.handleChange}
             value={channelId}
             inputStyles={{ backgroundColor: '#fff' }}
+            validator={this.validate}
+            validationMessage='At least 3 letters, and can contain only a-z and/or a hyphen.' // eslint-disable-line
           />
 
           <Gutter vertical />
@@ -81,7 +101,7 @@ class JoinChannel extends Component {
               flat
               secondary
               onClick={this.joinChannel}
-              disabled={!channelId}
+              disabled={!isValid}
             >
               Join
             </Button>

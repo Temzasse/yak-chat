@@ -7,16 +7,16 @@ import MessageComposer from './MessageComposer';
 import MessageList from './MessageList';
 import ChatHeader from './ChatHeader';
 
-const propTypes = {
-  user: PropTypes.object.isRequired,
-  addMessage: PropTypes.func.isRequired,
-  joinChannel: PropTypes.func.isRequired,
-  messages: pt.observableArray.isRequired,
-  activeChannel: PropTypes.object.isRequired,
-  onSharePress: PropTypes.func.isRequired
-};
-
 class ActiveChat extends Component {
+  static propTypes = {
+    user: PropTypes.object.isRequired,
+    addMessage: PropTypes.func.isRequired,
+    joinChannel: PropTypes.func.isRequired,
+    messages: pt.observableArray.isRequired,
+    activeChannel: PropTypes.object.isRequired,
+    onSharePress: PropTypes.func.isRequired
+  };
+
   state = {
     showShareModal: false,
   };
@@ -72,8 +72,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   margin-bottom: 60px;
 `;
-
-ActiveChat.propTypes = propTypes;
 
 export default inject(({ store: { chat, user } }) => ({
   addMessage: chat.addMessage,
