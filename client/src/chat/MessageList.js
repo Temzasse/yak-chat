@@ -102,7 +102,7 @@ const Wrapper = styled.div`
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   position: relative;
-
+  
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent;

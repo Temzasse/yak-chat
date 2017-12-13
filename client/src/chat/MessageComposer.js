@@ -72,6 +72,10 @@ const Wrapper = styled.form`
   padding: 0px 16px;
   display: flex;
   align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
 `;
 
 const Input = styled.input`

@@ -35,6 +35,9 @@ const ChatHeaderWrapper = styled.div`
   padding: 0px 16px;
   align-items: center;
   display: flex;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 
   ${media.tablet`
     display: none;
