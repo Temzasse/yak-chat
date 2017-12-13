@@ -7,6 +7,7 @@ import { guid } from '../services/utils';
 const propTypes = {
   addMessage: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
+  followMessages: PropTypes.func.isRequired
 };
 
 class MessageComposer extends Component {
@@ -23,6 +24,7 @@ class MessageComposer extends Component {
     if (message) {
       this.props.addMessage({ id: guid(), content: message, sender: user });
       this.setState({ message: '' });
+      this.props.followMessages();
     }
   }
 

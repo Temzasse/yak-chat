@@ -57,6 +57,7 @@ class ActiveChat extends Component {
         <MessageComposer
           user={user}
           addMessage={addMessage}
+          followMessages={followMessages}
           key='message-composer'
         />
       </Wrapper>
