@@ -105,9 +105,9 @@ app._io.on('connection', sock => {
   });
 
   sock.on('GET_CHANNEL_USER_COUNT', channelId => {
-    logger.info(`GET_CHANNEL_USER_COUNT: ${channelId}`);
     const roomData = sock.adapter.rooms[channelId];
     const count = roomData ? roomData.length : 0;
+    logger.info(`> Channel user count: ${channelId}, ${count}`);
     sock.emit('CHANNEL_USER_COUNT', { channelId, count });
   });
 

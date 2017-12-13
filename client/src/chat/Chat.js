@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
+import { Link, Route, withRouter, Switch } from 'react-router-dom';
 import media from 'react-components-kit/dist/media';
 import Layout from 'react-components-kit/dist/Layout';
 import Gutter from 'react-components-kit/dist/Gutter';
 import NewIcon from 'react-icons/lib/fa/plus';
-import { Link, Route, withRouter } from 'react-router-dom';
 import Modal from 'react-components-kit/dist/Modal';
 import Button from 'react-components-kit/dist/Button';
 import QRCode from 'qrcode.react'; // eslint-disable-line
@@ -14,6 +14,7 @@ import QRCode from 'qrcode.react'; // eslint-disable-line
 import Sidebar from '../common/Sidebar';
 import Navbar from '../common/Navbar';
 import BlockButton from '../common/BlockButton';
+import ChatEmpty from '../common/ChatEmpty';
 import ActiveChat from './ActiveChat';
 import CreateUser from '../user/CreateUser';
 import JoinChannel from '../channel/JoinChannel';
@@ -107,11 +108,15 @@ class Chat extends Component {
             onMenuPress={this.toggleSidebarOpen}
             onSharePress={this.toggleShareModal}
           />
-          <Route
-            path={`${match.url}/:channelId`}
-            render={props =>
-              <ActiveChat {...props} onSharePress={this.toggleShareModal} />}
-          />
+          <Switch>
+            <Route
+              path={`${match.url}/:channelId`}
+              render={props =>
+                <ActiveChat {...props} onSharePress={this.toggleShareModal} />
+              }
+            />
+            <Route path={match.url} component={ChatEmpty} />
+          </Switch>
         </Main>
 
         <Modal visible={!user}>
