@@ -11,7 +11,9 @@ import registerServiceWorker from './registerServiceWorker';
 import { createSocket, initSocket } from './services/websocket';
 import createStore from './store';
 import config from './config';
+import { initDB } from './services/storage';
 
+initDB('yak');
 const socket = createSocket();
 const store = createStore({ socket }); // Inject dependencies
 

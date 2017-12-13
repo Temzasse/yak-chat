@@ -1,4 +1,4 @@
-import { types, getParent, getEnv } from 'mobx-state-tree';
+import { types, getParent, getEnv, flow } from 'mobx-state-tree';
 import storage from '../services/storage';
 import User from '../user/user.model';
 import Channel from '../channel/channel.model';
@@ -11,13 +11,12 @@ const Chat = types
     generatedChannelId: types.maybe(types.string),
   })
   .actions(self => ({
-    fetchChannels() {
+    fetchChannels: flow(function* fetchChannels() {
       // Get persisted data
-      const activeChannel = storage.getActiveChannel();
-      const channels = storage.getChannels();
-
-      if (activeChannel) self.joinChannel(activeChannel);
-
+      const activeChannel = yield storage.getActiveChannel();
+      console.log(activeChannel);
+      const channels = yield storage.getChannels();
+      console.log(channels);
       const { socket } = getEnv(self);
 
       channels.forEach(channelId => {
@@ -30,19 +29,21 @@ const Chat = types
           socket.emit('JOIN_CHANNEL', channelId);
         }
       });
-    },
 
-    joinChannel(channelId) {
+      if (activeChannel) self.joinChannel(activeChannel);
+    }),
+
+    joinChannel: flow(function* joinChannel(channelId) {
       const channel = Channel.create({ id: channelId });
       self.channels.put(channel);
       self.activeChannel = channelId;
-      storage.setActiveChannel(channelId);
-      storage.addChannel(channelId);
+      yield storage.setActiveChannel(channelId);
+      yield storage.addChannel(channelId);
 
       const { socket } = getEnv(self);
       self.activeChannel.setLoading(true);
       socket.emit('JOIN_CHANNEL', channelId);
-    },
+    }),
 
     createChannel(channelId) {
       self.joinChannel(channelId);
@@ -53,8 +54,10 @@ const Chat = types
       storage.setActiveChannel(channelId);
     },
 
-    loadLocalMessages(channelId) {
-      const messages = storage.getMessages(channelId);
+    loadLocalMessages: flow(function* loadLocalMessages(channelId) {
+      let messages = yield storage.getMessages(channelId);
+      messages = messages.rows.map(row => row.doc.data);
+      console.log(messages);
 
       messages.forEach(msg => {
         const {
@@ -70,7 +73,7 @@ const Chat = types
 
         mchannel.messages.push({ id, content, sender: u, timestamp, type });
       });
-    },
+    }),
 
     receiveMessage({ channelId, msg }) {
       const {

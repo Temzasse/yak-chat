@@ -9,7 +9,7 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 
 const config = {
   IS_PROD,
-  API_URL: 'https://d79fdd09.ngrok.io',
+  API_URL: 'http://0.0.0.0:3332',
 };
 
 export default config;

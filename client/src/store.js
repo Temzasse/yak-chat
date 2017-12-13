@@ -1,4 +1,4 @@
-import { types } from 'mobx-state-tree';
+import { types, flow } from 'mobx-state-tree';
 import storage from './services/storage';
 import Chat from './chat/chat.model';
 import User from './user/user.model';
@@ -10,17 +10,23 @@ const RootStore = types
     chat: types.optional(Chat, {}),
   })
   .actions(self => ({
-    fetchUser() {
-      const user = storage.getUser();
-      if (user) self.user = User.create(user);
-      self.userFetched = true;
-    },
+    fetchUser: flow(function* fetchUser() {
+      try {
+        const { data: user } = yield storage.getUser();
+        console.log('moi', user);
+        if (user) self.user = User.create(user);
+        self.userFetched = true;
+      } catch (error) {
+        console.log(error);
+        self.userFetched = true;
+      }
+    }),
 
-    setUser(u) {
+    setUser: flow(function* setUser(u) {
       const user = { ...u, id: Date.now().toString() };
-      storage.setUser(user);
+      yield storage.setUser(user);
       self.user = User.create(user);
-    },
+    }),
   }))
   // Same as Redux selectors
   .views(self => ({
