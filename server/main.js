@@ -72,8 +72,13 @@ app._io.on('connection', sock => {
 
   sock.on('JOIN_CHANNEL', ({ channelId, fcmToken }) => {
     if (!channelId) return;
-
     sock.join(channelId);
+
+    // Emit updated user count to other clients
+    logger.info(`GET_CHANNEL_USER_COUNT: ${channelId}`);
+    const roomData = sock.adapter.rooms[channelId];
+    const count = roomData ? roomData.length : 0;
+    app._io.in(channelId).emit('CHANNEL_USER_COUNT', { channelId, count });
 
     // Handle notifications
     if (fcmToken) subscribeToChannel(channelId, fcmToken);
@@ -100,8 +105,26 @@ app._io.on('connection', sock => {
       });
   });
 
+  sock.onclose = function(reason) {
+    const rooms = Object.keys(sock.rooms);
+    rooms.forEach(channelId => {
+      sock.leave(channelId);
+      // Emit updated user count to other clients
+      logger.info(`GET_CHANNEL_USER_COUNT: ${channelId}`);
+      const roomData = sock.adapter.rooms[channelId];
+      const count = roomData ? roomData.length : 0;
+      app._io.in(channelId).emit('CHANNEL_USER_COUNT', { channelId, count });
+    });
+  };
+
   sock.on('LEAVE_CHANNEL', channelId => {
     sock.leave(channelId);
+
+    // Emit updated user count to other clients
+    logger.info(`GET_CHANNEL_USER_COUNT: ${channelId}`);
+    const roomData = sock.adapter.rooms[channelId];
+    const count = roomData ? roomData.length : 0;
+    sock.emit('CHANNEL_USER_COUNT', { channelId, count });
   });
 
   sock.on('GET_CHANNEL_USER_COUNT', channelId => {

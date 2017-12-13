@@ -51,7 +51,7 @@ export const initSocket = ({ store }) => {
       console.debug('> GET_CHANNEL_USER_COUNT');
       socket.emit('GET_CHANNEL_USER_COUNT', store.chat.activeChannel.id);
     }
-  }, 2000);
+  }, 10000);
 };
 
 export default createSocket;
