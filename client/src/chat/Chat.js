@@ -117,18 +117,20 @@ class Chat extends Component {
           <CreateUser />
         </Modal>
 
-        <Modal visible={showShareModal} hide={this.toggleShareModal} >
-          <QrCodeWrapper className='share-qr-code'>
-            <QRCode
-              size={600}
-              value={window.location.href}
-            />
-            <p> {window.location.href} </p>
-          </QrCodeWrapper>
-          <Modal.Footer>
-            <Button flat onClick={this.toggleShareModal}>Close</Button>
-            <Gutter />
-          </Modal.Footer>
+        <Modal visible={showShareModal} hide={this.toggleShareModal}>
+          <Modal.Body>
+            <QrCodeWrapper>
+              <QRCode size={600} value={window.location.href} />
+              <p> {window.location.href} </p>
+            </QrCodeWrapper>
+
+            <Modal.Footer>
+              <Button flat onClick={this.toggleShareModal}>
+                Close
+              </Button>
+              <Gutter />
+            </Modal.Footer>
+          </Modal.Body>
         </Modal>
 
         {/* NOTE:
@@ -203,9 +205,15 @@ const ChannelActiveIndicator = styled.div`
 `;
 
 const QrCodeWrapper = styled.div`
-  margin: 8%;
   text-align: center;
   font-size: 22px;
+
+  & > canvas {
+    max-width: 100%;
+    width: 100% !important;
+    height: auto !important;
+  }
+
   ${media.phone`
     font-size: 14px;
   `}
