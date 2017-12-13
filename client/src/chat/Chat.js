@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
+import media from 'react-components-kit/dist/media';
 import Layout from 'react-components-kit/dist/Layout';
 import Gutter from 'react-components-kit/dist/Gutter';
 import NewIcon from 'react-icons/lib/fa/plus';
 import { Link, Route } from 'react-router-dom';
 import Modal from 'react-components-kit/dist/Modal';
+import Button from 'react-components-kit/dist/Button';
+import QRCode from 'qrcode.react';
 
 import Sidebar from '../common/Sidebar';
 import Navbar from '../common/Navbar';
@@ -26,17 +29,14 @@ class Chat extends Component {
 
   state = {
     sidebarOpen: false,
-    showShareModal: false,
     joinModalOpen: false,
+    showShareModal: false,
   }
 
   toggleSidebarOpen = () => {
     this.setState(prev => ({ sidebarOpen: !prev.sidebarOpen }));
   }
 
-  toggleShareModal = () => {
-    this.setState(prev => ({ showShareModal: !prev.showShareModal }));
-  }
   openJoinModal = () => {
     this.setState({ joinModalOpen: true });
   }
@@ -45,8 +45,13 @@ class Chat extends Component {
     if (this.props.activeChannel) this.setState({ joinModalOpen: false });
   }
 
+  toggleShareModal = () => {
+    console.log('sharemodal');
+    this.setState(prev => ({ showShareModal: !prev.showShareModal }));
+  }
+
   render() {
-    const { sidebarOpen, joinModalOpen } = this.state;
+    const { sidebarOpen, joinModalOpen, showShareModal } = this.state;
     const { match, activeChannel, channels, user } = this.props;
     const noChannels = channels.length === 0;
 
@@ -88,12 +93,33 @@ class Chat extends Component {
         </Sidebar>
 
         <Main column>
-        <Navbar onMenuPress={this.toggleSidebarOpen} onSharePress={this.toggleShareModal} />
-          <Route path={`${match.url}/:channelId`} component={ActiveChat} />
+          <Navbar
+            onMenuPress={this.toggleSidebarOpen}
+            onSharePress={this.toggleShareModal}
+          />
+          <Route
+            path={`${match.url}/:channelId`}
+            render={props =>
+              <ActiveChat {...props} onSharePress={this.toggleShareModal} />}
+          />
         </Main>
 
         <Modal visible={!user}>
           <CreateUser />
+        </Modal>
+
+        <Modal visible={showShareModal} hide={this.toggleShareModal} >
+          <QrCodeWrapper className='share-qr-code'>
+            <QRCode
+              size={600}
+              value={window.location.href}
+            />
+            <p> {window.location.href} </p>
+          </QrCodeWrapper>
+          <Modal.Footer>
+            <Button flat onClick={this.toggleShareModal}>Close</Button>
+            <Gutter />
+          </Modal.Footer>
         </Modal>
 
         {/* NOTE:
@@ -166,6 +192,16 @@ const ChannelActiveIndicator = styled.div`
   border-radius: 12px;
   transform: translateY(-50%);
 `;
+
+const QrCodeWrapper = styled.div`
+  margin: 8%;
+  text-align: center;
+  font-size: 22px;
+  ${media.phone`
+    font-size: 14px;
+  `}
+`;
+
 
 export default inject(({ store: { chat, user } }) => ({
   activeChannel: chat.activeChannel,

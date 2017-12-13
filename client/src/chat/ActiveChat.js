@@ -13,9 +13,14 @@ const propTypes = {
   joinChannel: PropTypes.func.isRequired,
   messages: pt.observableArray.isRequired,
   activeChannel: PropTypes.object.isRequired,
+  onSharePress: PropTypes.func.isRequired
 };
 
 class ActiveChat extends Component {
+  state = {
+    showShareModal: false,
+  };
+
   componentDidMount() {
     // Handle autojoining channel
     const { match: { params }, activeChannel } = this.props;
@@ -27,8 +32,7 @@ class ActiveChat extends Component {
   }
 
   render() {
-    const { messages, user, activeChannel, addMessage } = this.props;
-
+    const { messages, user, activeChannel, addMessage, onSharePress } = this.props;
     if (!activeChannel) return null; // bail out, nothing here to see
 
     const {
@@ -40,7 +44,7 @@ class ActiveChat extends Component {
 
     return (
       <Wrapper>
-        <ChatHeader />
+        <ChatHeader onSharePress={onSharePress} />
         <MessageList
           messages={messages}
           user={user || {}}

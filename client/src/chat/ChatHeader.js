@@ -4,18 +4,23 @@ import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
 import media from 'react-components-kit/dist/media';
 import Text from 'react-components-kit/dist/Text';
+import Gutter from 'react-components-kit/dist/Gutter';
+import ShareIcon from 'react-icons/lib/fa/share-square-o';
 
 const propTypes = {
   activeChannel: PropTypes.shape({
     id: PropTypes.string.isRequired,
   }).isRequired,
+  onSharePress: PropTypes.func.isRequired,
 };
 
-const ChatHeader = ({ activeChannel }) => (
+const ChatHeader = ({ activeChannel, onSharePress }) => (
   <ChatHeaderWrapper>
     <Text size='18px' bold>
       {activeChannel ? activeChannel.id : ''}
     </Text>
+    <Gutter />
+    <ShareIcon onClick={onSharePress} />
   </ChatHeaderWrapper>
 );
 

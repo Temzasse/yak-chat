@@ -16,3 +16,10 @@ img {
 p {
   line-height: 1.65;
 }
+
+
+.share-qr-code canvas {
+  height: auto !important;
+  width: 100% !important;
+  max-width: 600px;
+}
