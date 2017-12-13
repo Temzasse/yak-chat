@@ -42,6 +42,11 @@ const NavbarWrapper = styled.div`
 
   ${media.tablet`
     display: flex;
+    position: fixed;
+    z-index: 99;
+    top: 0;
+    left: 0;
+    width: 100%;
   `}
 `;
 

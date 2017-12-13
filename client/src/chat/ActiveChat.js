@@ -74,6 +74,7 @@ const Wrapper = styled.div`
 
   ${media.tablet`
     margin-bottom: 60px;
+    margin-top: 50px;
   `}
 `;
 

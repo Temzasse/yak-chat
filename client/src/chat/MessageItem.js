@@ -85,6 +85,7 @@ const Nickname = styled.div`
 
 // background-color: ${props => props.theme.secondaryColorLight};
 const Avatar = styled.div`
+  flex: none;
   border-radius: 50%;
   height: 32px;
   width: 32px;
