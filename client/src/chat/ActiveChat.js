@@ -57,6 +57,7 @@ class ActiveChat extends Component {
         <MessageComposer
           user={user}
           addMessage={addMessage}
+          followMessages={followMessages}
           key='message-composer'
         />
       </Wrapper>
@@ -69,6 +70,7 @@ const Wrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  margin-bottom: 60px;
 `;
 
 ActiveChat.propTypes = propTypes;

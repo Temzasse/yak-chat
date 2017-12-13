@@ -39,6 +39,8 @@ const NavbarWrapper = styled.div`
   padding: 0px 16px;
   align-items: center;
   display: none;
+  
+  
 
   ${media.tablet`
     display: flex;

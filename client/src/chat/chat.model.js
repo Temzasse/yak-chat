@@ -20,7 +20,11 @@ const Chat = types
       channels.forEach(channelId => {
         const channel = Channel.create({ id: channelId });
         self.channels.put(channel);
-        self.loadLocalMessages(channelId);
+
+        // For some reason this is not working without setTimeout?
+        setTimeout(() => {
+          self.loadLocalMessages(channelId);
+        });
       });
 
       if (activeChannel) self.joinChannel(activeChannel);

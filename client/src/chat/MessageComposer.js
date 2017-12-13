@@ -7,6 +7,7 @@ import { guid } from '../services/utils';
 const propTypes = {
   addMessage: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
+  followMessages: PropTypes.func.isRequired
 };
 
 class MessageComposer extends Component {
@@ -23,6 +24,7 @@ class MessageComposer extends Component {
     if (message) {
       this.props.addMessage({ id: guid(), content: message, sender: user });
       this.setState({ message: '' });
+      this.props.followMessages();
     }
   }
 
@@ -72,6 +74,10 @@ const Wrapper = styled.form`
   padding: 0px 16px;
   display: flex;
   align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
 `;
 
 const Input = styled.input`
