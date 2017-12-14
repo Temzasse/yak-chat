@@ -5,7 +5,7 @@ let API_URL = IS_PROD
   ? `http://${window.location.host}/`
   : 'http://0.0.0.0:3332';
 
-if (IS_DEMO) API_URL = 'https://f964f9e7.eu.ngrok.io';
+if (IS_DEMO) API_URL = 'https://a6710118.eu.ngrok.io';
 
 const config = {
   IS_PROD,
