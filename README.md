@@ -1,7 +1,8 @@
 # Yak Chat
 
-Yak Chat is a school project to research modern technologies such as WebSockets, Service Worker and offline storages
-to create an efficient and easy-to-use chat application.
+Yak Chat is a school project to research modern technologies such as WebSockets, Service Worker and offline storages to create an efficient and easy-to-use chat application.
+
+The frontend is implemented with React, styled-components and mobx-state-tree, and the light-weight backend is built with Koa and MongoDB. Real-time communication is dealt with socket.io on both sides, and data is persisted with localStorage and the application caching is provided by create-react-app out of the box via a Service Worker.
 
 ---
 
@@ -13,8 +14,9 @@ to create an efficient and easy-to-use chat application.
 
 ## Requirements
 
-* Docker
-* Node.js (relatively new > v6)
+* [Docker](https://docs.docker.com/engine/installation/)
+* [Node.js](https://nodejs.org/en/download/)
+* [ngrok](https://ngrok.com/) (for production demo only)
 
 ## Development
 
@@ -28,7 +30,11 @@ Then start the app:
 $ npm run up
 ```
 
-Build the production (demo) version with [ngrok](https://ngrok.com/):
+Then open [localhost:3000](http://localhost:3000) in the browser.
+
+## Production demo
+
+Build the production demo version with ngrok:
 
 First start ngrok:
 ```
@@ -46,7 +52,6 @@ If you have made changes after last build re-build from scratch:
 ```
 $ npm run demo:clean
 ```
-
 ### Handy commands
 
 Remove current containers:
@@ -70,7 +75,6 @@ container:
 $ npm run reinstall:client
 $ npm run reinstall:server
 ```
-
 ## Screenshots
 
 <p align='center'>
