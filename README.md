@@ -4,6 +4,15 @@ Yak Chat is a school project to research modern technologies such as WebSockets,
 
 The frontend is implemented with React, styled-components and mobx-state-tree, and the light-weight backend is built with Koa and MongoDB. Real-time communication is dealt with socket.io on both sides, and data is persisted with localStorage and the application caching is provided by create-react-app out of the box via a Service Worker.
 
+**Current features:**
+
+* Send and receive messages in real-time
+* Create multiple channels
+* Invite people to channels with a QR-code
+* Directly join channel by it's name
+* See how many people are currently in the channel
+* Automatically generate funny channel name suggestions
+
 ---
 
 <p align='center'>
